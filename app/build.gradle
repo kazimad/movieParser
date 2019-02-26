@@ -8,17 +8,31 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.example.movieparser"
+        applicationId "com.kazimad.movieparser"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        config {
+            keyAlias 'key'
+            keyPassword 'android'
+            storeFile file('config.jks')
+            storePassword 'android'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            buildConfigField "boolean", "LOGS_ENABLED", "false"
+        }
+        debug {
+            debuggable true
+            buildConfigField "boolean", "LOGS_ENABLED", "true"
         }
     }
 }

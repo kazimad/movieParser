@@ -1,4 +1,4 @@
-package com.example.movieparser
+package com.kazimad.movieparser
 
 import androidx.test.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4

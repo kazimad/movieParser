@@ -1,4 +1,4 @@
-package com.example.movieparser
+package com.kazimad.movieparser
 
 import org.junit.Test
 
