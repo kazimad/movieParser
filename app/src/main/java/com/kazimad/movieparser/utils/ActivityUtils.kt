@@ -1,16 +1,22 @@
-package com.kazimad.movieparser
+package com.kazimad.movieparser.utils
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.kazimad.movieparser.R
 
 object ActivityUtils {
 
     fun addFragmentToActivity(activity: FragmentActivity, fragment: Fragment) {
-        ActivityUtils.addFragmentToActivity(activity, fragment, false)
+        addFragmentToActivity(activity, fragment, false)
     }
 
     fun addFragmentToActivity(activity: FragmentActivity, fragment: Fragment, addToBackStack: Boolean) {
-        ActivityUtils.addFragmentToActivity(activity, fragment, addToBackStack, R.id.fragmentContainer)
+        addFragmentToActivity(
+            activity,
+            fragment,
+            addToBackStack,
+            R.id.fragmentContainer
+        )
     }
 
     fun addFragmentToActivity(

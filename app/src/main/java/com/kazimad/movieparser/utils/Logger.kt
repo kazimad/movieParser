@@ -1,13 +1,15 @@
-package com.kazimad.movieparser
+package com.kazimad.movieparser.utils
 
 import android.util.Log
+import com.kazimad.movieparser.BuildConfig
 
 class Logger {
     companion object {
         var LOGS_ENABLED = true
 
         fun init() {
-            LOGS_ENABLED = BuildConfig.LOGS_ENABLED
+            LOGS_ENABLED =
+                BuildConfig.LOGS_ENABLED
         }
 
         fun log(_message: String) {

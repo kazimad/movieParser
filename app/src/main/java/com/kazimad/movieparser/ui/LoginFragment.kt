@@ -1,5 +1,7 @@
-package com.kazimad.movieparser
+package com.kazimad.movieparser.ui
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,40 +12,32 @@ import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
-import android.content.Intent
+import com.kazimad.movieparser.MainInterface
+import com.kazimad.movieparser.R
 
 
+class LoginFragment : Fragment(), MainInterface {
 
-
-class LoginFragment : Fragment() {
-
-    private lateinit var loginButton: com.facebook.login.widget.LoginButton
-    private var loginManager: CallbackManager? = null
+    private lateinit var activityContext: MainInterface
+    val callbackManager = CallbackManager.Factory.create()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val fragmentView = inflater.inflate(R.layout.fragment_login, container, false)
 
-
-        loginButton = fragmentView.findViewById(R.id.login_button) as LoginButton
+        val loginButton = fragmentView.findViewById(R.id.login_button) as LoginButton
         loginButton.setReadPermissions("email")
         loginButton.fragment = this
 
-        loginManager?.let {
-            loginButton.registerCallback(loginManager, object : FacebookCallback<LoginResult> {
+        callbackManager?.let {
+            loginButton.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
                 override fun onSuccess(loginResult: LoginResult) {
-                    Logger.log("LoginFragment onSuccess ")
-                    System.out.println("LoginFragment onSuccess")
                 }
 
                 override fun onCancel() {
-                    Logger.log("LoginFragment onCancel ")
-                    System.out.println("LoginFragment onCancel")
 
                 }
 
                 override fun onError(exception: FacebookException) {
-                    Logger.log("LoginFragment onError ${exception.message}")
-                    System.out.println("LoginFragment onError ${exception.message}")
 
                 }
             })
@@ -52,9 +46,11 @@ class LoginFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        loginManager?.onActivityResult(requestCode, resultCode, data)
+        callbackManager?.onActivityResult(requestCode, resultCode, data)
     }
-    fun setCallLoginCallBack(loginManager: CallbackManager) {
-        this.loginManager = loginManager
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activityContext = (context as MainInterface)
     }
 }
