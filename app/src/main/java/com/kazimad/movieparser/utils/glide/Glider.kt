@@ -2,7 +2,6 @@ package com.kazimad.movieparser.utils.glide
 
 import android.text.TextUtils
 import android.widget.ImageView
-import com.kazimad.movieparser.GlideApp
 import com.kazimad.movieparser.R
 
 

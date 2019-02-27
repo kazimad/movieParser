@@ -1,9 +1,8 @@
 package com.kazimad.movieparser.models.response
 
-import com.google.gson.annotations.SerializedName
-import com.kazimad.movieparser.models.response.Data
-
-data class TopResponse(@SerializedName("data")
-                       val data: Data,
-                       @SerializedName("kind")
-                       val kind: String = "")
+data class TopResponse(
+    val page: Int,
+    val total_results: Int,
+    val total_pages: Int,
+    val results: List<MovieData>
+)

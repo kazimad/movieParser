@@ -5,7 +5,7 @@ import com.kazimad.movieparser.App.Companion.mainComponent
 
 class ApiProvider {
     companion object {
-        const val baseUrl = "https://api.themoviedb.org/3/"
+        const val baseUrl = "https://api.themoviedb.org/"
     }
 
 

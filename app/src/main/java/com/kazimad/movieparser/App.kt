@@ -1,6 +1,7 @@
 package com.kazimad.movieparser
 
 import android.app.Application
+import com.kazimad.movieparser.dagger.component.DaggerMainComponent
 import com.kazimad.movieparser.dagger.component.MainComponent
 import com.kazimad.movieparser.dagger.module.ApiModule
 import com.kazimad.movieparser.utils.Logger

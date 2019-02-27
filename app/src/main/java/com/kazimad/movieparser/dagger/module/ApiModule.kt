@@ -6,9 +6,6 @@ import com.google.gson.GsonBuilder
 import com.kazimad.movieparser.BuildConfig
 import com.kazimad.movieparser.remote.ApiInterface
 import com.kazimad.movieparser.remote.ApiProvider
-import com.kazimad.reditparcer.BuildConfig
-import com.kazimad.reditparcer.remote.ApiInterface
-import com.kazimad.reditparcer.remote.ApiProvider
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -18,7 +15,6 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Modifier
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 @Module
 class ApiModule {

@@ -9,6 +9,7 @@ import com.facebook.Profile
 import com.kazimad.movieparser.MainInterface
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.utils.ActivityUtils
+import com.kazimad.movieparser.utils.Logger
 
 
 class MainActivity : AppCompatActivity(), MainInterface {
@@ -46,6 +47,8 @@ class MainActivity : AppCompatActivity(), MainInterface {
     }
 
     private fun onProfileReceived(profile: Profile?) {
+      Logger.log("onProfileReceived ${profile?.name}")
+      Logger.log("onProfileReceived ${profile?.linkUri}")
         profile?.let {
             ActivityUtils.addFragmentToActivity(
                 this@MainActivity, MainFragment.newInstance(profile)
