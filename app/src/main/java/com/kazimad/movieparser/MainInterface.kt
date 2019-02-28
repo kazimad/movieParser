@@ -1,3 +1,5 @@
 package com.kazimad.movieparser
 
-interface MainInterface
+interface MainInterface{
+    fun onUserLoggedIn(){}
+}

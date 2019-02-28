@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.facebook.AccessToken
 import com.facebook.Profile
 
+
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
 
     var profileLiveData = MutableLiveData<Profile>()

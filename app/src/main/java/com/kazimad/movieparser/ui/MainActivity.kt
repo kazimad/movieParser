@@ -21,8 +21,8 @@ class MainActivity : AppCompatActivity(), MainInterface {
         setContentView(R.layout.activity_main)
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
 
-        viewModel.loginCheckerLiveData.observe(this, Observer<Boolean> { t -> onUserLoginCheck(t) })
-        viewModel.profileLiveData.observe(this, Observer<Profile> { t -> onProfileReceived(t) })
+        viewModel.loginCheckerLiveData.observe(this, Observer<Boolean> { t -> checkUserLogin(t) })
+        viewModel.profileLiveData.observe(this, Observer<Profile> { t -> onCurrentProfileReceived(t) })
 
         viewModel.checkIsUserLoginIn()
     }
@@ -34,10 +34,16 @@ class MainActivity : AppCompatActivity(), MainInterface {
         }
     }
 
+    override fun onUserLoggedIn() {
+        super.onUserLoggedIn()
+        Logger.log("MainActivity onUserLoggedIn()")
+        checkUserLogin(true)
+    }
 
-    private fun onUserLoginCheck(userLogedIn: Boolean?) {
-        userLogedIn?.let {
-            if (userLogedIn) {
+    private fun checkUserLogin(userLoggedIn: Boolean?) {
+        Logger.log("MainActivity checkUserLogin")
+        userLoggedIn?.let {
+            if (userLoggedIn) {
                 viewModel.getCurrentProfile()
             } else {
                 val loginFragment = LoginFragment()
@@ -46,9 +52,8 @@ class MainActivity : AppCompatActivity(), MainInterface {
         }
     }
 
-    private fun onProfileReceived(profile: Profile?) {
-      Logger.log("onProfileReceived ${profile?.name}")
-      Logger.log("onProfileReceived ${profile?.linkUri}")
+    private fun onCurrentProfileReceived(profile: Profile?) {
+      Logger.log("onCurrentProfileReceived ${profile?.name}")
         profile?.let {
             ActivityUtils.addFragmentToActivity(
                 this@MainActivity, MainFragment.newInstance(profile)
