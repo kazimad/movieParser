@@ -1,18 +1,35 @@
 package com.kazimad.movieparser.models.response
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.kazimad.movieparser.persistance.DataConverter
+
+@Entity
 data class MovieData(
     val adult: Boolean,
-    val backdrop_path: String,
-    val genre_ids: List<Int>,
+    @ColumnInfo(name = "backdrop_path")
+    val backdropPath: String,
+    @TypeConverters(DataConverter::class)
+    @ColumnInfo(name = "genre_ids")
+    val genreIds: List<Int>,
+    @PrimaryKey()
     val id: Int,
-    val original_language: String,
-    val original_title: String,
+    @ColumnInfo(name = "original_language")
+    val originalLanguage: String,
+    @ColumnInfo(name = "original_title")
+    val originalTitle: String,
     val overview: String,
     val popularity: Double,
-    val poster_path: String,
-    val release_date: String,
+    @ColumnInfo(name = "poster_path")
+    val posterPath: String,
+    @ColumnInfo(name = "release_date")
+    val releaseDate: String,
     val title: String,
     val video: Boolean,
-    val vote_average: Double,
-    val vote_count: Int
+    @ColumnInfo(name = "vote_average")
+    val voteAverage: Double,
+    @ColumnInfo(name = "vote_count")
+    val voteCount: Int
 )
