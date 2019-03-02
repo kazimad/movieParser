@@ -1,43 +1,58 @@
 package com.kazimad.movieparser.dagger.module
 
-import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import com.kazimad.movieparser.persistance.AppDatabase
 import com.kazimad.movieparser.persistance.DbDataSource
 import com.kazimad.movieparser.persistance.DbRepository
 import com.kazimad.movieparser.persistance.MovieDao
-import com.kazimad.movieparser.utils.Logger
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
 
 @Module
-class RoomModule(mApplication: Application) {
+class RoomModule {
 
-    private lateinit var db: AppDatabase
 
-    init {
-        db = Room.databaseBuilder(mApplication, AppDatabase::class.java, "demo-db").build()
-        Logger.log("RoomModule init ${db.VERSION}")
+//    @Singleton
+//    @Provides
+//    fun provideTvMazeDatabase(application: Application): AppDatabase {
+//        return Room.databaseBuilder(
+//            application,
+//            AppDatabase::class.java, AppDatabase.VERSION
+//        )
+//            .fallbackToDestructiveMigration()
+//            .allowMainThreadQueries()
+//            .build()
+//    }
+//
+//    @Singleton
+//    @Provides
+//    fun provideShowDao(tvMazeDatabase: AppDatabase): MovieDao {
+//        return tvMazeDatabase.getMovieDao()
+//    }
+
+
+    @Singleton
+    @Provides
+    internal fun providesRoomDatabase(context: Context): AppDatabase {
+        return Room.databaseBuilder(context, AppDatabase::class.java, "demo-db")
+            .fallbackToDestructiveMigration()
+            .allowMainThreadQueries()
+            .build()
     }
 
     @Singleton
     @Provides
-    internal fun providesRoomDatabase(): AppDatabase {
-        return db
+    internal fun providesMovieDao(dataBase: AppDatabase): MovieDao {
+        return dataBase.getMovieDao()
     }
 
     @Singleton
     @Provides
-    internal fun providesProductDao(dataBase: AppDatabase): MovieDao {
-        return dataBase.getProductDao()
-    }
-
-    @Singleton
-    @Provides
-    internal fun productRepository(productDao: MovieDao): DbRepository {
-        return DbDataSource(productDao)
+    internal fun movieRepository(movieDao: MovieDao): DbRepository {
+        return DbDataSource(movieDao)
     }
 
 }

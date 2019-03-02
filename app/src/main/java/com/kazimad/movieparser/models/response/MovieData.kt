@@ -9,6 +9,9 @@ import com.kazimad.movieparser.persistance.DataConverter
 
 @Entity
 data class MovieData(
+    @PrimaryKey
+    val id: Int?,
+
     val adult: Boolean?,
     @ColumnInfo(name = "backdrop_path")
     @SerializedName("backdrop_path")
@@ -18,9 +21,6 @@ data class MovieData(
     @ColumnInfo(name = "genre_ids")
     @SerializedName("genre_ids")
     val genreIds: List<Int>?,
-
-    @PrimaryKey
-    val id: Int?,
 
     @ColumnInfo(name = "original_language")
     @SerializedName("original_language")

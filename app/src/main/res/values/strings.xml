@@ -3,5 +3,12 @@
     <string name="fb_login_protocol_scheme">fb994216064035731</string>
 
     <string name="app_name">MovieParser</string>
-    <string name="action_settings">Settings</string>
+
+    <string name="item_add_to_favorite">add to favorite</string>
+    <string name="item_remove_from_favorite">remove from favorite</string>
+    <string name="item_share">share</string>
+
+    <string name="activity_films">films</string>
+    <string name="activity_favorites">favorites</string>
+
 </resources>

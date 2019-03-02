@@ -1,4 +1,4 @@
-package com.kazimad.movieparser.ui
+package com.kazimad.movieparser.ui.main
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

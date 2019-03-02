@@ -1,20 +1,17 @@
 package com.kazimad.movieparser.dagger.module
 
+import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 
 @Module
-class ContextModule {
-    lateinit var mContext: Context
-
-    fun ContextModule(context: Context) {
-        this.mContext = context
-    }
-
+class ContextModule (var context: Context) {
     @Provides
-    fun getmContext(): Context {
-        return mContext.getApplicationContext()
+    @Singleton
+    internal fun providesContext(): Context {
+        return context
     }
 }

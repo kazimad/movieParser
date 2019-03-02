@@ -8,7 +8,9 @@ import com.kazimad.movieparser.models.response.MovieData
 @Database(entities = [MovieData::class], version = 1)
 @TypeConverters(DataConverter::class)
 abstract class AppDatabase : RoomDatabase() {
-    val VERSION = 1
+    companion object {
+        val VERSION = "1"
+    }
 
-    abstract fun getProductDao(): MovieDao
+    abstract fun getMovieDao(): MovieDao
 }

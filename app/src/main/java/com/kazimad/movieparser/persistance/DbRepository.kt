@@ -1,17 +1,21 @@
 package com.kazimad.movieparser.persistance
 
-import androidx.lifecycle.LiveData
 import com.kazimad.movieparser.models.response.MovieData
 
 
 interface DbRepository {
 
-    fun findById(id: Int): LiveData<MovieData>
+    fun findById(id: Int): MovieData
 
-    fun findAll(): LiveData<List<MovieData>>
+    fun findAll(): List<MovieData>
 
     fun insert(movieData: MovieData)
 
+    fun insertAll(movieData: List<MovieData>)
+
     fun delete(movieData: MovieData)
+
+    fun deleteAll()
+
 
 }
