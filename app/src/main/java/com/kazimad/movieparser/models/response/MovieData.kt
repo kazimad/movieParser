@@ -52,5 +52,7 @@ data class MovieData(
 
     @ColumnInfo(name = "vote_count")
     @SerializedName("vote_count")
-    val voteCount: Int?
+    val voteCount: Int?,
+
+    var isFavorite: Boolean = false
 )

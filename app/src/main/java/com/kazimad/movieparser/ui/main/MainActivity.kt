@@ -9,19 +9,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
-import com.bumptech.glide.Glide
 import com.facebook.Profile
 import com.google.android.material.tabs.TabLayout
-import com.kazimad.movieparser.MainInterface
+import com.kazimad.movieparser.InterfaceActivity
+import com.kazimad.movieparser.InterfaceFragment
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.adapters.SectionsPagerAdapter
 import com.kazimad.movieparser.ui.login.LoginFragment
 import com.kazimad.movieparser.utils.ActivityUtils
 import com.kazimad.movieparser.utils.Logger
+import com.kazimad.movieparser.utils.glide.Glider
 
 
-class MainActivity : AppCompatActivity(), MainInterface {
-
+class MainActivity : AppCompatActivity(), InterfaceActivity {
 
     private lateinit var viewModel: MainActivityViewModel
     private lateinit var loginContainer: FrameLayout
@@ -58,9 +58,10 @@ class MainActivity : AppCompatActivity(), MainInterface {
     }
 
     override fun onUserLoggedIn() {
-        super.onUserLoggedIn()
+        loginContainer.visibility = View.GONE
         checkUserLogin(true)
     }
+
 
     private fun checkUserLogin(userLoggedIn: Boolean?) {
         userLoggedIn?.let {
@@ -78,19 +79,22 @@ class MainActivity : AppCompatActivity(), MainInterface {
         Logger.log("onCurrentProfileReceived ${profile?.name}")
         profile?.let {
             ActivityUtils.addFragmentToActivity(
-                this@MainActivity, MainFragment.newInstance(profile)
+                this@MainActivity, MainFragment()
             )
         }
     }
 
     private fun lodAvatar() {
-        val imageUrl = "http://graph.facebook.com/" + Profile.getCurrentProfile().id + "/picture?type=small"
-        Glide.with(this)
-            .load(imageUrl)
-            .into(imageView)
+        if (Profile.getCurrentProfile() != null) {
+            val imageUrl = "http://graph.facebook.com/" + Profile.getCurrentProfile().id + "/picture?type=small"
+            Glider.downloadOrShowErrorSimple(imageUrl, imageView)
+        }
     }
 
     private fun prepareTabLayoutAndViewPager() {
+        val mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
+        viewPagerContainer.adapter = mSectionsPagerAdapter
+
         val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
         tabLayout.addTab(tabLayout.newTab().setText(this.getString(R.string.activity_films)))
         tabLayout.addTab(tabLayout.newTab().setText(this.getString(R.string.activity_favorites)))
@@ -101,6 +105,10 @@ class MainActivity : AppCompatActivity(), MainInterface {
         tabLayout.setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager.currentItem = tab.position
+                Logger.log("MainActivity onTabSelected ${tab.position}")
+//                if (mSectionsPagerAdapter.getItem(tab.position) is InterfaceFragment) {
+//                    (mSectionsPagerAdapter.getItem(tab.position) as InterfaceFragment).onTabSelected()
+//                }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
@@ -112,7 +120,6 @@ class MainActivity : AppCompatActivity(), MainInterface {
             }
         })
 
-        val mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
-        viewPagerContainer.adapter = mSectionsPagerAdapter
+
     }
 }

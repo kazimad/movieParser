@@ -10,57 +10,115 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.dagger.enums.MoviewItemClickVariant
-import com.kazimad.movieparser.models.response.MovieData
+import com.kazimad.movieparser.enums.ClickVariants
+import com.kazimad.movieparser.enums.ListTypes
+import com.kazimad.movieparser.interfaces.CustomClickListener
 import com.kazimad.movieparser.remote.ApiProvider
 import com.kazimad.movieparser.ui.main.MainFragmentViewModel
+import com.kazimad.movieparser.utils.Logger
 import com.kazimad.movieparser.utils.glide.Glider
 
-class MovieAdapter(val items: List<MovieData>, val context: Context) : RecyclerView.Adapter<ViewHolder>() {
-    var mainFragmentViewModel: MainFragmentViewModel? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(
-            LayoutInflater.from(context).inflate(
-                R.layout.item_movie,
-                parent,
-                false
+class MovieAdapter(private val items: List<SectionedMovieItem>, val context: Context) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    var mainFragmentViewModel: MainFragmentViewModel? = null
+    var customClickListener: CustomClickListener? = null
+    private val viewTypeHeader = 1
+    private val viewTypeItem = 0
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        when (viewType) {
+            viewTypeHeader -> return ViewHolderHeader(
+                LayoutInflater.from(context).inflate(
+                    R.layout.item_section_header,
+                    parent,
+                    false
+                )
             )
-        )
+            else -> {
+                return ViewHolderItem(
+                    LayoutInflater.from(context).inflate(
+                        R.layout.item_movie,
+                        parent,
+                        false
+                    )
+                )
+            }
+        }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val currentItem = items[position]
-        Glider.downloadOrShowErrorSimple(ApiProvider.baseImageUrl + currentItem.posterPath, holder.avatar)
-        holder.headerText.text = currentItem.originalTitle
-        holder.descriptionText.text = currentItem.overview
-        holder.ratingText.text = currentItem.voteAverage.toString()
-        holder.favoriteContainer.setOnClickListener {
-            mainFragmentViewModel?.let {
-                mainFragmentViewModel!!.onMovieButtonClick(MoviewItemClickVariant.ADD_FAVORITE, currentItem)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        Logger.log("getItemViewType holder.itemViewType is ${holder.itemViewType}")
+
+        when (holder.itemViewType) {
+            viewTypeHeader -> {
+                val viewHolderHeader = holder as ViewHolderHeader
+                val currentItem = items[position]
+                viewHolderHeader.header.text = currentItem.headerText
+            }
+            else -> {
+                val viewHolder = holder as ViewHolderItem
+                val currentItem = items[position].value
+                currentItem?.let {
+                    Glider.downloadOrShowErrorSimple(
+                        ApiProvider.baseImageUrl + currentItem.posterPath,
+                        viewHolder.avatar
+                    )
+                    viewHolder.headerText.text = currentItem.originalTitle
+                    viewHolder.descriptionText.text = currentItem.overview
+                    viewHolder.ratingText.text = currentItem.popularity.toString()
+                    viewHolder.favoriteContainer.setOnClickListener {
+                        mainFragmentViewModel?.let {
+                            viewHolder.favoriteText.text =
+                                    if (currentItem.isFavorite) context.getString(R.string.item_add_to_favorite) else context.getString(
+                                        R.string.item_remove_from_favorite
+                                    )
+                            currentItem.isFavorite = !currentItem.isFavorite
+                            mainFragmentViewModel!!.onMovieButtonClick(MoviewItemClickVariant.FAVORITE, currentItem)
+                        }
+                    }
+                    viewHolder.shareContainer.setOnClickListener {
+                        customClickListener?.onCustomClick(ClickVariants.SHARE_CLICK, currentItem)
+                    }
+                }
             }
         }
-        holder.shareContainer.setOnClickListener {
-            mainFragmentViewModel?.let {
-                mainFragmentViewModel!!.onMovieButtonClick(MoviewItemClickVariant.SHARE, currentItem)
-            }
-        }
+
     }
 
     override fun getItemCount(): Int {
         return items.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        Logger.log("getItemViewType items[position].type is ${items[position].type}")
+        return when (items[position].type) {
+            ListTypes.HEADER -> viewTypeHeader
+            else -> {
+                viewTypeItem
+            }
+        }
+    }
+
     fun setVieModel(mainFragmentViewModel: MainFragmentViewModel) {
         this.mainFragmentViewModel = mainFragmentViewModel
     }
 
+    fun setCustomClick(customClickListener: CustomClickListener) {
+        this.customClickListener = customClickListener
+    }
 }
 
-class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    var avatar = view.findViewById<ImageView>(R.id.avatar)!!
-    var headerText = view.findViewById<TextView>(R.id.headerTV)!!
-    var descriptionText = view.findViewById<TextView>(R.id.descriptionTV)!!
-    var ratingText = view.findViewById<TextView>(R.id.ratingTV)!!
-    var favoriteContainer = view.findViewById<LinearLayout>(R.id.favoriteContainer)!!
-    var shareContainer = view.findViewById<LinearLayout>(R.id.shareContainer)!!
+class ViewHolderItem(view: View) : RecyclerView.ViewHolder(view) {
+    var avatar = view.findViewById<ImageView>(R.id.avatar)
+    var headerText = view.findViewById<TextView>(R.id.headerTV)
+    var descriptionText = view.findViewById<TextView>(R.id.descriptionTV)
+    var ratingText = view.findViewById<TextView>(R.id.ratingTV)
+    var favoriteContainer = view.findViewById<LinearLayout>(R.id.favoriteContainer)
+    var favoriteText = view.findViewById<TextView>(R.id.favoriteText)
+    var shareContainer = view.findViewById<LinearLayout>(R.id.shareContainer)
+}
+
+class ViewHolderHeader(view: View) : RecyclerView.ViewHolder(view) {
+    var header = view.findViewById<TextView>(R.id.headerTV)
 }

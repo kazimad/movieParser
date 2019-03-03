@@ -2,9 +2,6 @@ package com.kazimad.movieparser.persistance
 
 import androidx.room.*
 import com.kazimad.movieparser.models.response.MovieData
-import androidx.room.FtsOptions.Order
-import androidx.room.OnConflictStrategy
-
 
 
 @Dao
@@ -30,4 +27,7 @@ interface MovieDao {
 
     @Query("SELECT * FROM MovieData")
     fun getMovieDatas(): List<MovieData>
+
+    @Query("SELECT * FROM MovieData WHERE isFavorite == 1")
+    fun loadOnlyFavorite(): List<MovieData>
 }

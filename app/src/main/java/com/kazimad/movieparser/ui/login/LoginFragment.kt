@@ -14,16 +14,21 @@ import com.facebook.Profile
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
-import com.kazimad.movieparser.MainInterface
+import com.kazimad.movieparser.InterfaceFragment
+import com.kazimad.movieparser.InterfaceActivity
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.utils.Logger
 
 
-class LoginFragment : Fragment(), MainInterface {
+class LoginFragment : Fragment(), InterfaceFragment {
 
-    private lateinit var activityContext: MainInterface
+    private lateinit var activityContext: InterfaceActivity
     private val facebookCallbackManager = CallbackManager.Factory.create()!!
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activityContext = (context as InterfaceActivity)
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val fragmentView = inflater.inflate(R.layout.fragment_login, container, false)
 
@@ -71,8 +76,8 @@ class LoginFragment : Fragment(), MainInterface {
 
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        activityContext = (context as MainInterface)
+
+    override fun onTabSelected() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

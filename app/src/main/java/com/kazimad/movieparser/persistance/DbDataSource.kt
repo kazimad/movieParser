@@ -5,29 +5,37 @@ import javax.inject.Inject
 
 
 class DbDataSource @Inject
-constructor(private val productDao: MovieDao) : DbRepository {
+constructor(private val movieDao: MovieDao) : DbRepository {
 
+    override fun update(movieData: MovieData) {
+        return movieDao.updateMovieData(movieData)
+    }
+
+    override fun loadOnlyFavorite(): List<MovieData> {
+        return movieDao.loadOnlyFavorite()
+    }
 
     override fun deleteAll() {
-        productDao.deleteAllMovieData()
+        movieDao.deleteAllMovieData()
     }
+
     override fun delete(movieData: MovieData) {
-        productDao.deleteMovieData(movieData)
+        movieDao.deleteMovieData(movieData)
     }
 
     override fun findAll(): List<MovieData> {
-        return productDao.getMovieDatas()
+        return movieDao.getMovieDatas()
     }
 
     override fun findById(id: Int): MovieData {
-        return productDao.getMovieDataById(id)
+        return movieDao.getMovieDataById(id)
     }
 
     override fun insert(movieData: MovieData) {
-        productDao.insertMovieData(movieData)
+        movieDao.insertMovieData(movieData)
     }
 
     override fun insertAll(movieData: List<MovieData>) {
-        productDao.insertAllMovieDatas(movieData)
+        movieDao.insertAllMovieDatas(movieData)
     }
 }

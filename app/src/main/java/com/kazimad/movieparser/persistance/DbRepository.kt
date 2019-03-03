@@ -11,11 +11,14 @@ interface DbRepository {
 
     fun insert(movieData: MovieData)
 
+    fun update(movieData: MovieData)
+
     fun insertAll(movieData: List<MovieData>)
 
     fun delete(movieData: MovieData)
 
     fun deleteAll()
 
+    fun loadOnlyFavorite(): List<MovieData>
 
 }

@@ -13,5 +13,6 @@ interface ApiInterface {
     fun getList(
         @Query("api_key") apiKey: String,
         @Query("sort_by") sortBy: String,
-        @Query("primary_release_date.gte") releaseDate: String): Deferred<Response<TopResponse>>
+        @Query("primary_release_date.gte") releaseDateGte: String,
+        @Query("primary_release_date.lte") releaseDateLte: String): Deferred<Response<TopResponse>>
 }

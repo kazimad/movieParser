@@ -15,9 +15,7 @@ class Glider {
             val requestOptions = RequestOptions()
             requestOptions.placeholder(R.drawable.ic_image_holder)
             requestOptions.error(R.drawable.ic_no_image)
-            Logger.log("Glider url is $url")
             if (!TextUtils.isEmpty(url) && imageView != null) {
-                Logger.log("Glider success")
                 GlideApp.with(imageView.context)
                     .setDefaultRequestOptions(requestOptions)
                     .load(url)
