@@ -1,4 +1,4 @@
-package com.kazimad.movieparser.ui.main
+package com.kazimad.movieparser.ui.login
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -6,8 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.facebook.AccessToken
 import com.facebook.Profile
 
-
-class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
+class LoginActivityViewModel (application: Application) : AndroidViewModel(application) {
 
     var profileLiveData = MutableLiveData<Profile>()
     var loginCheckerLiveData = MutableLiveData<Boolean>()

@@ -1,11 +1,11 @@
 package com.kazimad.movieparser.utils.glide
 
+import android.net.Uri
 import android.text.TextUtils
 import android.widget.ImageView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.kazimad.movieparser.R
-import com.kazimad.movieparser.utils.Logger
 
 
 class Glider {
@@ -20,6 +20,18 @@ class Glider {
                     .setDefaultRequestOptions(requestOptions)
                     .load(url)
                     .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(imageView)
+            }
+        }
+
+        fun downloadAvatar(uri: Uri?, imageView: ImageView?) {
+            val requestOptions = RequestOptions()
+            requestOptions.placeholder(R.drawable.ic_image_holder)
+            requestOptions.error(R.drawable.ic_no_image)
+            if (uri != null && imageView != null) {
+                GlideApp.with(imageView.context)
+                    .setDefaultRequestOptions(requestOptions)
+                    .load(uri)
                     .into(imageView)
             }
         }

@@ -7,17 +7,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.Profile
+import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
-import com.kazimad.movieparser.InterfaceFragment
 import com.kazimad.movieparser.InterfaceActivity
+import com.kazimad.movieparser.InterfaceFragment
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.utils.Logger
+import com.facebook.FacebookException
+import com.facebook.Profile.getCurrentProfile
+import com.facebook.ProfileTracker
+
+
 
 
 class LoginFragment : Fragment(), InterfaceFragment {
@@ -29,6 +31,7 @@ class LoginFragment : Fragment(), InterfaceFragment {
         super.onAttach(context)
         activityContext = (context as InterfaceActivity)
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val fragmentView = inflater.inflate(R.layout.fragment_login, container, false)
 
@@ -38,17 +41,29 @@ class LoginFragment : Fragment(), InterfaceFragment {
 
 
         LoginManager.getInstance().registerCallback(facebookCallbackManager, object : FacebookCallback<LoginResult> {
-            override fun onSuccess(result: LoginResult?) {
-                Logger.log("LoginFragment onSuccess ${result?.accessToken}")
+            private var mProfileTracker: ProfileTracker? = null
+            override fun onSuccess(loginResult: LoginResult) {
+                if (Profile.getCurrentProfile() == null) {
+                    Logger.log("LoginFragment onCreateView onSuccess profile 1")
+                    mProfileTracker = object : ProfileTracker() {
+                        override fun onCurrentProfileChanged(oldProfile: Profile?, currentProfile: Profile?) {
+                            mProfileTracker?.stopTracking()
+                            Logger.log("LoginFragment onCreateView onSuccess profile 2")
 
+                        }
+                    }
+                    // no need to call startTracking() on mProfileTracker
+                    // because it is called by its constructor, internally.
+                } else {
+                    val profile = Profile.getCurrentProfile()
+                    Logger.log("LoginFragment onCreateView onSuccess profile is ${profile.name}")
+                }
             }
 
             override fun onCancel() {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
-            override fun onError(error: FacebookException?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            override fun onError(e: FacebookException) {
             }
         })
 //        loginButton.registerCallback(facebookCallbackManager, object : FacebookCallback<LoginResult> {
@@ -68,10 +83,12 @@ class LoginFragment : Fragment(), InterfaceFragment {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
-        facebookCallbackManager.onActivityResult(requestCode, resultCode, data)
-        activityContext.onUserLoggedIn()
-        Logger.log("LoginFragment onActivityResult Profile.getCurrentProfile() is ${Profile.getCurrentProfile()}")
+        if (facebookCallbackManager.onActivityResult(requestCode, resultCode, data)) {
+            return
+        }
+//        facebookCallbackManager.onActivityResult(requestCode, resultCode, data)
+//        activityContext.onUserLoggedIn()
+//        Logger.log("LoginFragment onActivityResult Profile.getCurrentProfile() is ${Profile.getCurrentProfile()}")
 
 
     }
