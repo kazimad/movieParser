@@ -10,7 +10,7 @@ import com.kazimad.movieparser.persistance.DataConverter
 @Entity
 data class MovieData(
     @PrimaryKey
-    val id: Int?,
+    val id: Int,
 
     val adult: Boolean?,
     @ColumnInfo(name = "backdrop_path")

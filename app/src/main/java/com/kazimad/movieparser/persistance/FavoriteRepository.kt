@@ -12,4 +12,6 @@ interface FavoriteRepository {
     fun deleteFavoriteData(id: Int)
 
     fun getAllFavorites(): List<FavoriteData>
+
+    fun insertAllFavoriteDatas(listFavoriteDatas: List<FavoriteData>)
 }

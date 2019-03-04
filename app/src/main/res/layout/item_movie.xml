@@ -53,19 +53,18 @@
 
         <TextView
             android:id="@+id/descriptionTV"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="3"
             android:textSize="@dimen/text_description"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/border"
             app:layout_constraintTop_toBottomOf="@+id/headerTV"
-            tools:text="description" />
+            tools:text="descriptiondescriptiondescriptiondescriptiondescription" />
 
         <ImageView
             android:id="@+id/dividerImageView"
@@ -109,7 +108,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:text="@string/item_add_to_favorite"
                     android:textAllCaps="true"
                     android:textColor="@color/lightish_green"
                     tools:text="Add to favotites" />

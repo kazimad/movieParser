@@ -20,10 +20,7 @@ import com.kazimad.movieparser.utils.Constants
 import com.kazimad.movieparser.utils.Constants.Companion.fullDateFormat
 import com.kazimad.movieparser.utils.Constants.Companion.shortFormat
 import com.kazimad.movieparser.utils.Logger
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import retrofit2.HttpException
 import java.util.*
 import javax.inject.Inject
@@ -46,6 +43,10 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
     var favoriteLiveData: MutableLiveData<List<SectionedMovieItem>?> = MutableLiveData()
     var errorLiveData: MutableLiveData<Throwable> = MutableLiveData()
 
+    private var favoritesArray: MutableList<FavoriteData> = mutableListOf()
+    private var allMoviesArray: MutableList<MovieData> = mutableListOf()
+    private val favoriteIdsValues: MutableList<Int> = mutableListOf()
+
     init {
         DaggerMainComponent.builder()
             .contextModule(ContextModule(application.applicationContext))
@@ -55,31 +56,40 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
             .injectToMainFragmentViewModel(this)
     }
 
-    fun getAllFavorites() {
-        GlobalScope.launch {
+    private fun getAllFavorites(): Job {
+        return GlobalScope.launch {
             withContext(Dispatchers.Main) {
-                //                favoriteLiveData.value = prepareData(sortByDate((dbSource.loadOnlyFavorite())))
-                Logger.log("MainFragmentViewModel getAllFavorites ${dbSource.loadOnlyFavorite().size}")
+                favoritesArray = favoriteDataSource.getAllFavorites() as MutableList<FavoriteData>
+                favoritesArray.forEach { favoriteIdsValues.add(it.id) }
+                val listPrepared = sortAndFilterValues(allMoviesArray)
+                favoriteLiveData.value = markFavorite(listPrepared)
             }
         }
     }
 
-    private fun updateFavorites(movieData: MovieData) {
-       Logger.log("updateFavorites movieData is ${movieData.id}")
-        movieData.id?.let {
-            GlobalScope.launch {
-                withContext(Dispatchers.Main) {
-                    favoriteDataSource.insertFavorites(FavoriteData(movieData.id))
-                }
-            }
-        }
+    fun showFavorites() {
+        favoriteLiveData.value = sortAndFilterValues(pickFavoritesFromMoviewDatas())
     }
 
-    private fun removeFromFavorites(movieData: MovieData) {
-        movieData.id?.let {
+    private fun pickFavoritesFromMoviewDatas(): MutableList<MovieData> {
+        val result: MutableList<MovieData> = mutableListOf()
+
+        allMoviesArray.forEach {
+            if (favoriteIdsValues.contains(it.id)) {
+                result.add(it)
+            }
+        }
+        return result
+    }
+
+    fun saveFavorites() {
+        if (favoriteIdsValues.isNotEmpty()) {
             GlobalScope.launch {
                 withContext(Dispatchers.Main) {
-                    favoriteDataSource.deleteFavoriteData(movieData.id)
+                    favoriteDataSource.deleteAllFavorites()
+                    favoritesArray.clear()
+                    favoriteIdsValues.forEach { favoritesArray.add(FavoriteData(it)) }
+                    favoriteDataSource.insertAllFavoriteDatas(favoritesArray)
                 }
             }
         }
@@ -106,25 +116,44 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
                 } catch (e: Throwable) {
                     Logger.log("e1 is ${e.message}")
                 } finally {
-                    moviesLiveData.value = sortAndFilterValues(dbSource.findAll())
+                    allMoviesArray = ArrayList(dbSource.findAll())
+
+                    val jobGetFavorite = getAllFavorites()
+                    jobGetFavorite.join()
+
+                    val listPrepared = sortAndFilterValues(allMoviesArray)
+                    moviesLiveData.value = markFavorite(listPrepared)
                 }
             }
         }
     }
 
+    private fun markFavorite(listSorted: List<SectionedMovieItem>): List<SectionedMovieItem> {
+        listSorted.forEach {
+            it.value?.isFavorite = favoriteIdsValues.contains(it.value?.id)
+        }
+        return listSorted
+    }
 
     fun onMovieButtonClick(clickVariant: MoviewItemClickVariant, movieData: MovieData) {
-       Logger.log("MainFragmentViewModel onMovieButtonClick clickVariant is $clickVariant")
         when (clickVariant) {
             MoviewItemClickVariant.ADD_FAVORITE -> {
-                updateFavorites(movieData)
+                workWithLocalFavoriteDatas(movieData, true)
             }
             MoviewItemClickVariant.REMOVE_FAVORITE -> {
-                removeFromFavorites(movieData)
+                workWithLocalFavoriteDatas(movieData, false)
             }
         }
     }
 
+
+    private fun workWithLocalFavoriteDatas(movieData: MovieData, insert: Boolean) {
+        if (insert) {
+            favoriteIdsValues.add(movieData.id)
+        } else {
+            favoriteIdsValues.remove(movieData.id)
+        }
+    }
 
     private fun getCurrentDateAndFormat(): String {
         val cal = Calendar.getInstance()!!
@@ -140,7 +169,7 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private fun sortAndFilterValues(unpreparedList: List<MovieData>): List<SectionedMovieItem> {
-        val result = ArrayList<SectionedMovieItem>()
+        val result: MutableList<SectionedMovieItem> = mutableListOf()
         val sortedListByMonth = unpreparedList.sortedWith(compareBy { it.releaseDate })
         val fullFormat = fullDateFormat
         val shortFormat = shortFormat
@@ -148,7 +177,7 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
 
 
         // separate by month
-        sortedListByMonth.forEach { it ->
+        sortedListByMonth.forEach {
             run {
                 val releaseDate = it.releaseDate
                 val dateFull = fullFormat.parse(releaseDate)
@@ -171,7 +200,7 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
         val rawHashMap = HashMap<String?, ArrayList<SectionedMovieItem>?>()
         var array: ArrayList<SectionedMovieItem>? = null
         var lastKey: String? = null
-        result.forEach { it ->
+        result.forEach {
             run {
                 if (it.type == ListTypes.HEADER) {
                     if (lastKey != null) {

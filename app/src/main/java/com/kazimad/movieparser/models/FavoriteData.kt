@@ -6,5 +6,5 @@ import androidx.room.PrimaryKey
 @Entity
 data class FavoriteData(
     @PrimaryKey
-    var id: Int?
+    val id: Int
 )

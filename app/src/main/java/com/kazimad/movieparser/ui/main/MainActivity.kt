@@ -8,6 +8,7 @@ import com.facebook.Profile
 import com.facebook.ProfileTracker
 import com.google.android.material.tabs.TabLayout
 import com.kazimad.movieparser.InterfaceActivity
+import com.kazimad.movieparser.InterfaceFragment
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.adapters.SectionsPagerAdapter
 import com.kazimad.movieparser.utils.Logger
@@ -39,16 +40,6 @@ class MainActivity : AppCompatActivity(), InterfaceActivity {
 
     private fun lodAvatar() {
         if (Profile.getCurrentProfile() != null) {
-
-//            val imageUrl = "http://graph.facebook.com/" + Profile.getCurrentProfile().id + "/picture"
-//            val imageUrl =
-//                "https://lookaside.facebook.com/platform/profilepic/?asid=" + Profile.getCurrentProfile().id + "&height=200&width=200"
-//            Logger.log("lodAvatar imageUrl is ${imageUrl}")
-//            Glider.downloadOrShowErrorSimple(imageUrl, imageView)
-
-//            var imgValue = URL("http://graph.facebook.com/" + Profile.getCurrentProfile().id + "/picture?type=large")
-//            val mIcon1 = BitmapFactory.decodeStream(imgValue.openConnection().getInputStream())
-//            imageView.setImageBitmap(mIcon1)
             val imageUri = Profile.getCurrentProfile().getProfilePictureUri(400, 400)
             Glider.downloadAvatar(imageUri, imageView)
         } else {
@@ -78,9 +69,9 @@ class MainActivity : AppCompatActivity(), InterfaceActivity {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager.currentItem = tab.position
                 Logger.log("MainActivity onTabSelected ${tab.position}")
-//                if (mSectionsPagerAdapter.getItem(tab.position) is InterfaceFragment) {
-//                    (mSectionsPagerAdapter.getItem(tab.position) as InterfaceFragment).onTabSelected()
-//                }
+                if (mSectionsPagerAdapter.getItem(tab.position) is InterfaceFragment) {
+                    (mSectionsPagerAdapter.getItem(tab.position) as InterfaceFragment).onTabSelected()
+                }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {

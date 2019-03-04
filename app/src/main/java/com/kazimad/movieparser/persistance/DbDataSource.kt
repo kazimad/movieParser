@@ -36,6 +36,6 @@ constructor(private val movieDao: MovieDao) : DbRepository {
     }
 
     override fun insertAll(movieData: List<MovieData>) {
-        movieDao.insertAllMovieDatas(movieData)
+        movieDao.insertAllMovieDatas(*movieData.toTypedArray())
     }
 }

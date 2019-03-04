@@ -60,6 +60,10 @@ class MainFragment : Fragment(), InterfaceFragment, CustomClickListener {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.saveFavorites()
+    }
 
     private fun onMoviesObserved(result: List<SectionedMovieItem>?) {
         result?.let {

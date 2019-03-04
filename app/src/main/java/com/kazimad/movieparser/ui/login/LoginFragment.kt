@@ -22,7 +22,7 @@ import com.facebook.ProfileTracker
 
 
 
-class LoginFragment : Fragment(), InterfaceFragment {
+class LoginFragment : Fragment() {
 
     private lateinit var activityContext: InterfaceActivity
     private val facebookCallbackManager = CallbackManager.Factory.create()!!
@@ -39,24 +39,16 @@ class LoginFragment : Fragment(), InterfaceFragment {
         loginButton.setReadPermissions("email")
         loginButton.fragment = this
 
-
         LoginManager.getInstance().registerCallback(facebookCallbackManager, object : FacebookCallback<LoginResult> {
             private var mProfileTracker: ProfileTracker? = null
             override fun onSuccess(loginResult: LoginResult) {
                 if (Profile.getCurrentProfile() == null) {
-                    Logger.log("LoginFragment onCreateView onSuccess profile 1")
                     mProfileTracker = object : ProfileTracker() {
                         override fun onCurrentProfileChanged(oldProfile: Profile?, currentProfile: Profile?) {
                             mProfileTracker?.stopTracking()
-                            Logger.log("LoginFragment onCreateView onSuccess profile 2")
 
                         }
                     }
-                    // no need to call startTracking() on mProfileTracker
-                    // because it is called by its constructor, internally.
-                } else {
-                    val profile = Profile.getCurrentProfile()
-                    Logger.log("LoginFragment onCreateView onSuccess profile is ${profile.name}")
                 }
             }
 
@@ -66,19 +58,6 @@ class LoginFragment : Fragment(), InterfaceFragment {
             override fun onError(e: FacebookException) {
             }
         })
-//        loginButton.registerCallback(facebookCallbackManager, object : FacebookCallback<LoginResult> {
-//            override fun onSuccess(loginResult: LoginResult) {
-//
-//            }
-//
-//            override fun onCancel() {
-//
-//            }
-//
-//            override fun onError(exception: FacebookException) {
-//
-//            }
-//        })
         return fragmentView
     }
 
@@ -86,15 +65,5 @@ class LoginFragment : Fragment(), InterfaceFragment {
         if (facebookCallbackManager.onActivityResult(requestCode, resultCode, data)) {
             return
         }
-//        facebookCallbackManager.onActivityResult(requestCode, resultCode, data)
-//        activityContext.onUserLoggedIn()
-//        Logger.log("LoginFragment onActivityResult Profile.getCurrentProfile() is ${Profile.getCurrentProfile()}")
-
-
-    }
-
-
-    override fun onTabSelected() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

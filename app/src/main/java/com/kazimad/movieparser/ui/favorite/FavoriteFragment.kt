@@ -9,12 +9,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kazimad.movieparser.InterfaceActivity
 import com.kazimad.movieparser.InterfaceFragment
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.adapters.MovieAdapter
+import com.kazimad.movieparser.adapters.SectionedMovieItem
 import com.kazimad.movieparser.enums.ClickVariants
 import com.kazimad.movieparser.interfaces.CustomClickListener
 import com.kazimad.movieparser.models.MovieData
@@ -23,11 +25,11 @@ import com.kazimad.movieparser.utils.Logger
 
 class FavoriteFragment : Fragment(), InterfaceFragment, CustomClickListener {
 
+    private var viewModel: MainFragmentViewModel? = null
     private lateinit var activityContext: InterfaceActivity
-    private lateinit var viewModel: MainFragmentViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MovieAdapter
-    private var movieResults: List<MovieData> = ArrayList<MovieData>()
+    private var movieResults: List<SectionedMovieItem> = ArrayList()
     private lateinit var swipeContainer: SwipeRefreshLayout
 
     override fun onAttach(context: Context) {
@@ -36,8 +38,10 @@ class FavoriteFragment : Fragment(), InterfaceFragment, CustomClickListener {
         activityContext = (context as InterfaceActivity)
 
         viewModel = ViewModelProviders.of(this).get(MainFragmentViewModel::class.java)
-//        viewModel.favoriteLiveData.observe(this, Observer { onFavoriteObserved(it) })
-        viewModel.errorLiveData.observe(this, Observer { onError(it) })
+        viewModel?.let {
+            viewModel!!.favoriteLiveData.observe(this, Observer { onFavoriteObserved(it) })
+            viewModel!!.errorLiveData.observe(this, Observer { onError(it) })
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -50,26 +54,35 @@ class FavoriteFragment : Fragment(), InterfaceFragment, CustomClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        viewModel.getAllFavorites()
-//        adapter = MovieAdapter(movieResults, recyclerView.context)
-//        recyclerView.layoutManager = LinearLayoutManager(recyclerView.context, RecyclerView.VERTICAL, false)
-//        recyclerView.adapter = adapter
-//        adapter.setVieModel(viewModel)
-//        adapter.setCustomClick(this)
-//        swipeContainer.setColorSchemeColors(resources.getColor(R.color.tomato_two))
-//        swipeContainer.setOnRefreshListener {
-//            viewModel.getAllFavorites()
-//            swipeContainer.isRefreshing = false
-//        }
+
+        adapter = MovieAdapter(movieResults, recyclerView.context)
+        recyclerView.layoutManager = LinearLayoutManager(recyclerView.context, RecyclerView.VERTICAL, false)
+        recyclerView.adapter = adapter
+        viewModel?.let {
+            adapter.setVieModel(viewModel!!)
+        }
+        adapter.setCustomClick(this)
+        swipeContainer.setColorSchemeColors(resources.getColor(R.color.tomato_two))
+        swipeContainer.setOnRefreshListener {
+            viewModel?.showFavorites()
+            swipeContainer.isRefreshing = false
+        }
     }
 
-    private fun onFavoriteObserved(result: List<MovieData>?) {
+    private fun onFavoriteObserved(result: List<SectionedMovieItem>?) {
         result?.let {
-            movieResults = result
-            adapter.notifyDataSetChanged()
+            val adapter = MovieAdapter(result, recyclerView.context)
+            recyclerView.layoutManager = LinearLayoutManager(recyclerView.context, RecyclerView.VERTICAL, false)
+            recyclerView.adapter = adapter
+            viewModel?.let {
+                adapter.setVieModel(viewModel!!)
+            }
+            adapter.setCustomClick(this)
+
         }
         Logger.log("onFavoriteObserved ${result?.size}")
     }
+
     override fun onCustomClick(variants: ClickVariants, moviewData: MovieData) {
         if (variants == ClickVariants.SHARE_CLICK) {
             shareMovie(moviewData)
@@ -93,7 +106,7 @@ class FavoriteFragment : Fragment(), InterfaceFragment, CustomClickListener {
 //        if (!::viewModel.isInitialized) {
 //            initViewModel()
 //        }
-        viewModel.getAllFavorites()
+        viewModel?.showFavorites()
 //        if (::viewModel.isInitialized) {
 //            Logger.log("viewModel.isInitialized")
 //        } else {
@@ -107,20 +120,9 @@ class FavoriteFragment : Fragment(), InterfaceFragment, CustomClickListener {
     }
 
 
-    override fun onResume() {
-        super.onResume()
-        Logger.log("FavoriteFragment onResume ")
-    }
-
     override fun onPause() {
         super.onPause()
-        Logger.log("FavoriteFragment onPause ")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Logger.log("FavoriteFragment onStop ")
-
+        viewModel?.saveFavorites()
     }
 
 }

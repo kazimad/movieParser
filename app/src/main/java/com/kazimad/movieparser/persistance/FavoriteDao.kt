@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.kazimad.movieparser.models.FavoriteData
+import com.kazimad.movieparser.models.MovieData
 
 @Dao
 interface FavoriteDao {
@@ -22,4 +23,7 @@ interface FavoriteDao {
 
     @Query("SELECT * FROM FavoriteData")
     fun getAllFavorites(): List<FavoriteData>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAllFavoriteDatas(vararg favoriteDatas: FavoriteData)
 }

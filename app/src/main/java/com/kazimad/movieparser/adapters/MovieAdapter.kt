@@ -1,6 +1,7 @@
 package com.kazimad.movieparser.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,7 +49,7 @@ class MovieAdapter(private val items: List<SectionedMovieItem>, val context: Con
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Logger.log("getItemViewType holder.itemViewType is ${holder.itemViewType}")
+//        Logger.log("getItemViewType holder.itemViewType is ${holder.itemViewType}")
 
         when (holder.itemViewType) {
             viewTypeHeader -> {
@@ -67,10 +68,13 @@ class MovieAdapter(private val items: List<SectionedMovieItem>, val context: Con
                     viewHolder.headerText.text = currentItem.originalTitle
                     viewHolder.descriptionText.text = currentItem.overview
                     viewHolder.ratingText.text = currentItem.popularity.toString()
+                    viewHolder.favoriteText.text = if (!currentItem.isFavorite) context.getString(R.string.item_add_to_favorite) else context.getString(
+                        R.string.item_remove_from_favorite
+                    )
                     viewHolder.favoriteContainer.setOnClickListener {
                         mainFragmentViewModel?.let {
-                            viewHolder.favoriteText.text =
-                                    if (currentItem.isFavorite) context.getString(R.string.item_add_to_favorite) else context.getString(
+                            Logger.log("currentItem.isFavorite is ${currentItem.isFavorite}")
+                            viewHolder.favoriteText.text = if (currentItem.isFavorite) context.getString(R.string.item_add_to_favorite) else context.getString(
                                         R.string.item_remove_from_favorite
                                     )
                             if (currentItem.isFavorite) {
@@ -85,6 +89,7 @@ class MovieAdapter(private val items: List<SectionedMovieItem>, val context: Con
                                 )
                             }
                             currentItem.isFavorite = !currentItem.isFavorite
+                            notifyDataSetChanged();
                         }
                     }
                     viewHolder.shareContainer.setOnClickListener {
@@ -101,7 +106,7 @@ class MovieAdapter(private val items: List<SectionedMovieItem>, val context: Con
     }
 
     override fun getItemViewType(position: Int): Int {
-        Logger.log("getItemViewType items[position].type is ${items[position].type}")
+//        Logger.log("getItemViewType items[position].type is ${items[position].type}")
         return when (items[position].type) {
             ListTypes.HEADER -> viewTypeHeader
             else -> {

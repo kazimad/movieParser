@@ -1,6 +1,7 @@
 package com.kazimad.movieparser.persistance
 
 import androidx.room.*
+import com.kazimad.movieparser.models.FavoriteData
 import com.kazimad.movieparser.models.MovieData
 
 
@@ -11,7 +12,7 @@ interface MovieDao {
     fun insertMovieData(movieData: MovieData)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAllMovieDatas(ListMovieData: List<MovieData>)
+    fun insertAllMovieDatas(vararg movieDatas: MovieData)
 
     @Update
     fun updateMovieData(movieData: MovieData)

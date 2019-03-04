@@ -7,6 +7,10 @@ import javax.inject.Inject
 class FavoriteDataSource @Inject
 constructor(private val favoriteDao: FavoriteDao) : FavoriteRepository {
 
+    override fun insertAllFavoriteDatas(listFavoriteDatas: List<FavoriteData>) {
+        favoriteDao.insertAllFavoriteDatas(*listFavoriteDatas.toTypedArray())
+    }
+
     override fun deleteFavoriteData(id: Int) {
         favoriteDao.deleteFavoriteData(id)
     }
