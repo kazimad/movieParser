@@ -1,5 +1,5 @@
 package com.kazimad.movieparser.dagger.enums
 
 enum class MoviewItemClickVariant {
-    FAVORITE, SHARE
+    ADD_FAVORITE, REMOVE_FAVORITE
 }

@@ -3,9 +3,10 @@ package com.kazimad.movieparser.persistance
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.kazimad.movieparser.models.response.MovieData
+import com.kazimad.movieparser.models.FavoriteData
+import com.kazimad.movieparser.models.MovieData
 
-@Database(entities = [MovieData::class], version = 1)
+@Database(entities = [MovieData::class, FavoriteData::class], version = 1)
 @TypeConverters(DataConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     companion object {
@@ -13,4 +14,6 @@ abstract class AppDatabase : RoomDatabase() {
     }
 
     abstract fun getMovieDao(): MovieDao
+
+    abstract fun getFavoriteDao(): FavoriteDao
 }

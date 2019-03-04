@@ -1,6 +1,5 @@
 package com.kazimad.movieparser.ui.main
 
-//import io.reactivex.disposables.CompositeDisposable
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -11,9 +10,11 @@ import com.kazimad.movieparser.dagger.module.ApiModule
 import com.kazimad.movieparser.dagger.module.ContextModule
 import com.kazimad.movieparser.dagger.module.RoomModule
 import com.kazimad.movieparser.enums.ListTypes
-import com.kazimad.movieparser.models.response.MovieData
+import com.kazimad.movieparser.models.FavoriteData
+import com.kazimad.movieparser.models.MovieData
 import com.kazimad.movieparser.models.response.TopResponse
 import com.kazimad.movieparser.persistance.DbDataSource
+import com.kazimad.movieparser.persistance.FavoriteDataSource
 import com.kazimad.movieparser.remote.ApiSource
 import com.kazimad.movieparser.utils.Constants
 import com.kazimad.movieparser.utils.Constants.Companion.fullDateFormat
@@ -34,6 +35,8 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
 
     @Inject
     lateinit var dbSource: DbDataSource
+    @Inject
+    lateinit var favoriteDataSource: FavoriteDataSource
     @Inject
     lateinit var apiSource: ApiSource
 
@@ -62,10 +65,21 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private fun updateFavorites(movieData: MovieData) {
+       Logger.log("updateFavorites movieData is ${movieData.id}")
         movieData.id?.let {
             GlobalScope.launch {
                 withContext(Dispatchers.Main) {
-                    dbSource.update(movieData)
+                    favoriteDataSource.insertFavorites(FavoriteData(movieData.id))
+                }
+            }
+        }
+    }
+
+    private fun removeFromFavorites(movieData: MovieData) {
+        movieData.id?.let {
+            GlobalScope.launch {
+                withContext(Dispatchers.Main) {
+                    favoriteDataSource.deleteFavoriteData(movieData.id)
                 }
             }
         }
@@ -100,12 +114,15 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
 
 
     fun onMovieButtonClick(clickVariant: MoviewItemClickVariant, movieData: MovieData) {
+       Logger.log("MainFragmentViewModel onMovieButtonClick clickVariant is $clickVariant")
         when (clickVariant) {
-            MoviewItemClickVariant.FAVORITE -> {
+            MoviewItemClickVariant.ADD_FAVORITE -> {
                 updateFavorites(movieData)
             }
+            MoviewItemClickVariant.REMOVE_FAVORITE -> {
+                removeFromFavorites(movieData)
+            }
         }
-        Logger.log("MainFragmentViewModel onMovieButtonClick $clickVariant, movieData ${movieData.id}")
     }
 
 

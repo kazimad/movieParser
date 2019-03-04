@@ -73,8 +73,18 @@ class MovieAdapter(private val items: List<SectionedMovieItem>, val context: Con
                                     if (currentItem.isFavorite) context.getString(R.string.item_add_to_favorite) else context.getString(
                                         R.string.item_remove_from_favorite
                                     )
+                            if (currentItem.isFavorite) {
+                                mainFragmentViewModel!!.onMovieButtonClick(
+                                    MoviewItemClickVariant.REMOVE_FAVORITE,
+                                    currentItem
+                                )
+                            } else {
+                                mainFragmentViewModel!!.onMovieButtonClick(
+                                    MoviewItemClickVariant.ADD_FAVORITE,
+                                    currentItem
+                                )
+                            }
                             currentItem.isFavorite = !currentItem.isFavorite
-                            mainFragmentViewModel!!.onMovieButtonClick(MoviewItemClickVariant.FAVORITE, currentItem)
                         }
                     }
                     viewHolder.shareContainer.setOnClickListener {

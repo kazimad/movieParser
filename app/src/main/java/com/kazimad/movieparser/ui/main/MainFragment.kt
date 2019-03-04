@@ -20,7 +20,7 @@ import com.kazimad.movieparser.adapters.MovieAdapter
 import com.kazimad.movieparser.adapters.SectionedMovieItem
 import com.kazimad.movieparser.enums.ClickVariants
 import com.kazimad.movieparser.interfaces.CustomClickListener
-import com.kazimad.movieparser.models.response.MovieData
+import com.kazimad.movieparser.models.MovieData
 import com.kazimad.movieparser.utils.Logger
 
 

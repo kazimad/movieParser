@@ -2,10 +2,7 @@ package com.kazimad.movieparser.dagger.module
 
 import android.content.Context
 import androidx.room.Room
-import com.kazimad.movieparser.persistance.AppDatabase
-import com.kazimad.movieparser.persistance.DbDataSource
-import com.kazimad.movieparser.persistance.DbRepository
-import com.kazimad.movieparser.persistance.MovieDao
+import com.kazimad.movieparser.persistance.*
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -13,26 +10,6 @@ import javax.inject.Singleton
 
 @Module
 class RoomModule {
-
-
-//    @Singleton
-//    @Provides
-//    fun provideTvMazeDatabase(application: Application): AppDatabase {
-//        return Room.databaseBuilder(
-//            application,
-//            AppDatabase::class.java, AppDatabase.VERSION
-//        )
-//            .fallbackToDestructiveMigration()
-//            .allowMainThreadQueries()
-//            .build()
-//    }
-//
-//    @Singleton
-//    @Provides
-//    fun provideShowDao(tvMazeDatabase: AppDatabase): MovieDao {
-//        return tvMazeDatabase.getMovieDao()
-//    }
-
 
     @Singleton
     @Provides
@@ -51,8 +28,19 @@ class RoomModule {
 
     @Singleton
     @Provides
+    internal fun providesFavoriteDao(dataBase: AppDatabase): FavoriteDao {
+        return dataBase.getFavoriteDao()
+    }
+
+    @Singleton
+    @Provides
     internal fun movieRepository(movieDao: MovieDao): DbRepository {
         return DbDataSource(movieDao)
     }
 
+    @Singleton
+    @Provides
+    internal fun favoriteRepository(favoriteDao: FavoriteDao): FavoriteRepository {
+        return FavoriteDataSource(favoriteDao)
+    }
 }

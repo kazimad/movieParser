@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kazimad.movieparser.InterfaceActivity
@@ -18,7 +17,7 @@ import com.kazimad.movieparser.R
 import com.kazimad.movieparser.adapters.MovieAdapter
 import com.kazimad.movieparser.enums.ClickVariants
 import com.kazimad.movieparser.interfaces.CustomClickListener
-import com.kazimad.movieparser.models.response.MovieData
+import com.kazimad.movieparser.models.MovieData
 import com.kazimad.movieparser.ui.main.MainFragmentViewModel
 import com.kazimad.movieparser.utils.Logger
 

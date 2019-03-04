@@ -1,8 +1,5 @@
 package com.kazimad.movieparser.remote
 
-import com.kazimad.movieparser.models.response.MovieData
-import com.kazimad.movieparser.models.response.TopResponse
-import com.kazimad.movieparser.utils.Constants
 //import io.reactivex.Observable
 //import io.reactivex.android.schedulers.AndroidSchedulers
 //import io.reactivex.schedulers.Schedulers

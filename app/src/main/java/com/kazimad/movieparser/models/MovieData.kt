@@ -1,4 +1,4 @@
-package com.kazimad.movieparser.models.response
+package com.kazimad.movieparser.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
