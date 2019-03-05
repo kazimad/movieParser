@@ -16,12 +16,4 @@ interface MainComponent {
     fun inject(app: App)
     fun injectToMainFragmentViewModel(mainFragmentViewModel: MainFragmentViewModel)
     fun injectToMovieAdapter(movieAdapter: MovieAdapter)
-//    fun productDao(): MovieDao
-//    fun demoDatabase(): AppDatabase
-//    //    fun productRepository(): DbRepository
-//    fun application(): Application
-//
-//    fun getApi(): ApiInterface
-//    fun getUserRepository(): ApiSource
-//    fun getApiProvider(): ApiProvider
 }

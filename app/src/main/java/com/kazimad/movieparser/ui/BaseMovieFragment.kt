@@ -16,21 +16,21 @@ import com.kazimad.movieparser.App
 import com.kazimad.movieparser.InterfaceActivity
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.adapters.MovieAdapter
-import com.kazimad.movieparser.adapters.SectionedMovieItem
 import com.kazimad.movieparser.enums.ClickVariants
 import com.kazimad.movieparser.interfaces.CustomClickListener
 import com.kazimad.movieparser.models.MovieData
-import com.kazimad.movieparser.models.error.ResponseException
+import com.kazimad.movieparser.models.SectionedMovieItem
 import com.kazimad.movieparser.ui.main.MainFragmentViewModel
-import com.kazimad.movieparser.utils.Logger
+import com.kazimad.movieparser.utils.NetworkUtils
+import retrofit2.HttpException
 
 abstract class BaseMovieFragment : Fragment(), CustomClickListener {
 
+    private lateinit var adapter: MovieAdapter
     protected lateinit var activityContext: InterfaceActivity
     protected lateinit var viewModel: MainFragmentViewModel
     protected lateinit var loadingContainer: ConstraintLayout
     protected lateinit var swipeContainer: SwipeRefreshLayout
-    protected lateinit var adapter: MovieAdapter
     protected lateinit var noResultsText: TextView
     protected lateinit var recyclerView: RecyclerView
 
@@ -54,6 +54,13 @@ abstract class BaseMovieFragment : Fragment(), CustomClickListener {
         swipeContainer.setOnRefreshListener {
             viewModel.showFavorites()
             swipeContainer.isRefreshing = false
+            if (!NetworkUtils.isNetworkAvailable(App.instance)) {
+                Toast.makeText(
+                    App.instance,
+                    App.instance.resources.getString(R.string.error_no_internet),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
     }
 
@@ -86,17 +93,24 @@ abstract class BaseMovieFragment : Fragment(), CustomClickListener {
         } else {
             noResultsText.visibility = View.GONE
         }
-
-        Logger.log("onMoviesObserved ${result?.size}")
     }
 
     protected fun onError(error: Throwable) {
-        val errorMassage = this.getString(R.string.error_text)
-        if (error is ResponseException) {
-            errorMassage + error.code + " " + error.errorMessage
+        if (!NetworkUtils.isNetworkAvailable(App.instance)) {
+            Toast.makeText(
+                App.instance,
+                App.instance.resources.getString(R.string.error_no_internet),
+                Toast.LENGTH_LONG
+            ).show()
+        } else {
+
+            val errorMassage = this.getString(R.string.error_text)
+            if (error is HttpException) {
+                errorMassage + error.code() + " " + error.message()
+            }
+            Toast.makeText(App.instance, errorMassage, Toast.LENGTH_LONG).show()
+            loadingContainer.visibility = View.GONE
         }
-        Toast.makeText(App.instance, errorMassage, Toast.LENGTH_LONG).show()
-        loadingContainer.visibility = View.GONE
     }
 
     override fun onPause() {
@@ -104,9 +118,9 @@ abstract class BaseMovieFragment : Fragment(), CustomClickListener {
         viewModel.saveFavorites()
     }
 
-    override fun onCustomClick(variants: ClickVariants, moviewData: MovieData) {
+    override fun onCustomClick(variants: ClickVariants, movieData: MovieData) {
         if (variants == ClickVariants.SHARE_CLICK) {
-            shareMovie(moviewData)
+            shareMovie(movieData)
         }
     }
 }

@@ -15,5 +15,6 @@
     <string name="error_text">Some thing went wrong </string>
     <string name="error_no_suitable_app">No suitable app found! </string>
     <string name="error_no_results">No results </string>
+    <string name="error_no_internet">No internet connection </string>
 
 </resources>

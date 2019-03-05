@@ -3,15 +3,15 @@ package com.kazimad.movieparser.ui.main
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.kazimad.movieparser.adapters.SectionedMovieItem
 import com.kazimad.movieparser.dagger.component.DaggerMainComponent
-import com.kazimad.movieparser.dagger.enums.MoviewItemClickVariant
+import com.kazimad.movieparser.dagger.enums.MovieItemClickVariant
 import com.kazimad.movieparser.dagger.module.ApiModule
 import com.kazimad.movieparser.dagger.module.ContextModule
 import com.kazimad.movieparser.dagger.module.RoomModule
 import com.kazimad.movieparser.enums.ListTypes
 import com.kazimad.movieparser.models.FavoriteData
 import com.kazimad.movieparser.models.MovieData
+import com.kazimad.movieparser.models.SectionedMovieItem
 import com.kazimad.movieparser.models.response.TopResponse
 import com.kazimad.movieparser.persistance.DbDataSource
 import com.kazimad.movieparser.persistance.FavoriteDataSource
@@ -19,7 +19,6 @@ import com.kazimad.movieparser.remote.ApiSource
 import com.kazimad.movieparser.utils.Constants
 import com.kazimad.movieparser.utils.Constants.Companion.fullDateFormat
 import com.kazimad.movieparser.utils.Constants.Companion.shortFormat
-import com.kazimad.movieparser.utils.Logger
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import java.util.*
@@ -30,26 +29,6 @@ import kotlin.collections.HashMap
 
 class MainFragmentViewModel(application: Application) : AndroidViewModel(application) {
 
-    @Inject
-    lateinit var dbSource: DbDataSource
-    @Inject
-    lateinit var favoriteDataSource: FavoriteDataSource
-    @Inject
-    lateinit var apiSource: ApiSource
-
-    init {
-        Logger.log("MainFragmentViewModel init")
-    }
-
-    //    private var compositeDisposable = CompositeDisposable()
-    var moviesLiveData: MutableLiveData<List<SectionedMovieItem>?> = MutableLiveData()
-    var favoriteLiveData: MutableLiveData<List<SectionedMovieItem>?> = MutableLiveData()
-    var errorLiveData: MutableLiveData<Throwable> = MutableLiveData()
-
-    private var favoritesArray: MutableList<FavoriteData> = mutableListOf()
-    private var allMoviesArray: MutableList<MovieData> = mutableListOf()
-    private val favoriteIdsValues: MutableList<Int> = mutableListOf()
-
     init {
         DaggerMainComponent.builder()
             .contextModule(ContextModule(application.applicationContext))
@@ -58,6 +37,22 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
             .build()
             .injectToMainFragmentViewModel(this)
     }
+
+    @Inject
+    lateinit var dbSource: DbDataSource
+    @Inject
+    lateinit var favoriteDataSource: FavoriteDataSource
+    @Inject
+    lateinit var apiSource: ApiSource
+
+    var moviesLiveData: MutableLiveData<List<SectionedMovieItem>?> = MutableLiveData()
+    var favoriteLiveData: MutableLiveData<List<SectionedMovieItem>?> = MutableLiveData()
+    var errorLiveData: MutableLiveData<Throwable> = MutableLiveData()
+
+    private var favoritesArray: MutableList<FavoriteData> = mutableListOf()
+    private var allMoviesArray: MutableList<MovieData> = mutableListOf()
+    private val favoriteIdsValues: MutableList<Int> = mutableListOf()
+
 
     private fun getAllFavorites(): Job {
         return GlobalScope.launch {
@@ -81,13 +76,11 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
 
     private fun pickFavoritesFromMovieDatas(): MutableList<MovieData> {
         val result: MutableList<MovieData> = mutableListOf()
-
         allMoviesArray.forEach {
             if (favoriteIdsValues.contains(it.id)) {
                 result.add(it)
             }
         }
-        Logger.log("pickFavoritesFromMovieDatas allMoviesArray ${allMoviesArray.size}, favoriteIdsValues is $favoriteIdsValues")
         return result
     }
 
@@ -121,9 +114,9 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
                     dbSource.insertAll((response?.body() as TopResponse).results)
 
                 } catch (e: HttpException) {
-                    Logger.log("e2 is ${e.message()}, e.code is ${e.code()}")
+                    errorLiveData.value = e
                 } catch (e: Throwable) {
-                    Logger.log("e1 is ${e.message}")
+                    errorLiveData.value = e
                 } finally {
                     allMoviesArray = ArrayList(dbSource.findAll())
 
@@ -144,12 +137,12 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
         return listSorted
     }
 
-    fun onMovieButtonClick(clickVariant: MoviewItemClickVariant, movieData: MovieData) {
+    fun onMovieButtonClick(clickVariant: MovieItemClickVariant, movieData: MovieData) {
         when (clickVariant) {
-            MoviewItemClickVariant.ADD_FAVORITE -> {
+            MovieItemClickVariant.ADD_FAVORITE -> {
                 workWithLocalFavoriteDatas(movieData, true)
             }
-            MoviewItemClickVariant.REMOVE_FAVORITE -> {
+            MovieItemClickVariant.REMOVE_FAVORITE -> {
                 workWithLocalFavoriteDatas(movieData, false)
             }
         }
@@ -185,7 +178,6 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
         val shortFormat = shortFormat
         var currentMonth: Int = -1
 
-        Logger.log("unpreparedList is $unpreparedList")
         // separate by month
         sortedListByMonth.forEach {
             run {
@@ -205,7 +197,6 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
                 }
             }
         }
-        Logger.log("technical is $technical")
 
         //separate values in each collection by dates
         val rawHashMap = HashMap<String?, ArrayList<SectionedMovieItem>?>()
@@ -230,8 +221,6 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
         val sortedHashMap = HashMap<String?, List<SectionedMovieItem>?>()
         rawHashMap.forEach { (key, value) ->
             run {
-                Logger.log("rawHashMap key is $key, value is $value")
-
                 val sortedList = value?.sortedWith(compareBy { it.value?.popularity })
                 sortedHashMap[key] = sortedList
             }
@@ -242,13 +231,17 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
         sortedHashMap.forEach { (key, value) ->
             run {
                 if (value != null) {
-                    Logger.log("sortedHashMap key is $key, value is $value")
-                    sortedFilteredResult.add(SectionedMovieItem(ListTypes.HEADER, null, key))
+                    sortedFilteredResult.add(
+                        SectionedMovieItem(
+                            ListTypes.HEADER,
+                            null,
+                            key
+                        )
+                    )
                     sortedFilteredResult.addAll(ArrayList(value))
                 }
             }
         }
-
         return sortedFilteredResult
     }
 }

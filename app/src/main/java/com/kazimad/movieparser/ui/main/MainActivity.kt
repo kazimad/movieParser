@@ -11,12 +11,10 @@ import com.kazimad.movieparser.InterfaceActivity
 import com.kazimad.movieparser.InterfaceFragment
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.adapters.SectionsPagerAdapter
-import com.kazimad.movieparser.utils.Logger
 import com.kazimad.movieparser.utils.glide.Glider
 
 
 class MainActivity : AppCompatActivity(), InterfaceActivity {
-
 
     private lateinit var viewPagerContainer: ViewPager
     private lateinit var imageView: ImageView
@@ -68,7 +66,6 @@ class MainActivity : AppCompatActivity(), InterfaceActivity {
         tabLayout.setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager.currentItem = tab.position
-                Logger.log("MainActivity onTabSelected ${tab.position}")
                 if (mSectionsPagerAdapter.getItem(tab.position) is InterfaceFragment) {
                     (mSectionsPagerAdapter.getItem(tab.position) as InterfaceFragment).onTabSelected()
                 }

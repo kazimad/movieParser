@@ -10,7 +10,7 @@ object ActivityUtils {
         addFragmentToActivity(activity, fragment, false)
     }
 
-    fun addFragmentToActivity(activity: FragmentActivity, fragment: Fragment, addToBackStack: Boolean) {
+    private fun addFragmentToActivity(activity: FragmentActivity, fragment: Fragment, addToBackStack: Boolean) {
         addFragmentToActivity(
             activity,
             fragment,
@@ -19,7 +19,7 @@ object ActivityUtils {
         )
     }
 
-    fun addFragmentToActivity(
+    private fun addFragmentToActivity(
         activity: FragmentActivity,
         fragment: Fragment,
         addToBackStack: Boolean,

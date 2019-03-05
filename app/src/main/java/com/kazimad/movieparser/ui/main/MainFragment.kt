@@ -5,21 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kazimad.movieparser.InterfaceFragment
 import com.kazimad.movieparser.R
-import com.kazimad.movieparser.adapters.MovieAdapter
-import com.kazimad.movieparser.adapters.SectionedMovieItem
-import com.kazimad.movieparser.enums.ClickVariants
-import com.kazimad.movieparser.interfaces.CustomClickListener
-import com.kazimad.movieparser.models.MovieData
 import com.kazimad.movieparser.ui.BaseMovieFragment
-import com.kazimad.movieparser.utils.Logger
 
 
 class MainFragment : BaseMovieFragment(), InterfaceFragment {
@@ -42,6 +33,7 @@ class MainFragment : BaseMovieFragment(), InterfaceFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getAllMovies()
+
     }
 
     override fun onTabSelected() {

@@ -8,13 +8,13 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.kazimad.movieparser.R
-import com.kazimad.movieparser.dagger.enums.MoviewItemClickVariant
+import com.kazimad.movieparser.dagger.enums.MovieItemClickVariant
 import com.kazimad.movieparser.enums.ClickVariants
 import com.kazimad.movieparser.enums.ListTypes
 import com.kazimad.movieparser.interfaces.CustomClickListener
+import com.kazimad.movieparser.models.SectionedMovieItem
 import com.kazimad.movieparser.remote.ApiProvider
 import com.kazimad.movieparser.ui.main.MainFragmentViewModel
-import com.kazimad.movieparser.utils.Logger
 import com.kazimad.movieparser.utils.glide.Glider
 
 
@@ -72,14 +72,13 @@ class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                                 else viewHolder.favoriteText.context.getString(R.string.item_remove_from_favorite)
                         viewHolder.favoriteContainer.setOnClickListener {
                             viewModel?.let {
-                                Logger.log("currentItem.isFavorite is ${currentItem.isFavorite}")
                                 viewHolder.favoriteText.text =
                                         if (currentItem.isFavorite) viewHolder.favoriteContainer.context.getString(R.string.item_add_to_favorite)
                                         else viewHolder.favoriteContainer.context.getString(R.string.item_remove_from_favorite)
                                 if (currentItem.isFavorite) {
-                                    viewModel!!.onMovieButtonClick(MoviewItemClickVariant.REMOVE_FAVORITE, currentItem)
+                                    viewModel!!.onMovieButtonClick(MovieItemClickVariant.REMOVE_FAVORITE, currentItem)
                                 } else {
-                                    viewModel!!.onMovieButtonClick(MoviewItemClickVariant.ADD_FAVORITE, currentItem)
+                                    viewModel!!.onMovieButtonClick(MovieItemClickVariant.ADD_FAVORITE, currentItem)
                                 }
                                 currentItem.isFavorite = !currentItem.isFavorite
                                 notifyDataSetChanged()

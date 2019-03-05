@@ -1,4 +1,4 @@
-package com.kazimad.movieparser.adapters
+package com.kazimad.movieparser.models
 
 import com.kazimad.movieparser.enums.ListTypes
 import com.kazimad.movieparser.models.MovieData

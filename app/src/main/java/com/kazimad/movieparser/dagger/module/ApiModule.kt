@@ -48,9 +48,7 @@ class ApiModule {
     @Provides
     fun provideApiInterface(): ApiInterface {
         val retrofit = Retrofit.Builder()
-//                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
-
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(ApiProvider.baseUrl)
             .client(getOkHttpClient())

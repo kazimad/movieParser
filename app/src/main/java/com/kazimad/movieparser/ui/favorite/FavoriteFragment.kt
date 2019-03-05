@@ -14,7 +14,6 @@ import com.kazimad.movieparser.interfaces.CustomClickListener
 import com.kazimad.movieparser.ui.BaseMovieFragment
 import com.kazimad.movieparser.ui.main.MainActivity
 import com.kazimad.movieparser.ui.main.MainFragmentViewModel
-import com.kazimad.movieparser.utils.Logger
 
 class FavoriteFragment : BaseMovieFragment(), InterfaceFragment, CustomClickListener {
 
@@ -35,7 +34,6 @@ class FavoriteFragment : BaseMovieFragment(), InterfaceFragment, CustomClickList
 
 
     override fun onTabSelected() {
-        Logger.log("FavoriteFragment onTabSelected()")
         loadingContainer.visibility = View.VISIBLE
         viewModel.showFavorites()
     }

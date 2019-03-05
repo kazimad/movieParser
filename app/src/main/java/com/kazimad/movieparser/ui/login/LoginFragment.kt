@@ -6,20 +6,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
 import com.kazimad.movieparser.InterfaceActivity
-import com.kazimad.movieparser.InterfaceFragment
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.utils.Logger
-import com.facebook.FacebookException
-import com.facebook.Profile.getCurrentProfile
-import com.facebook.ProfileTracker
-
-
+import com.kazimad.movieparser.utils.NetworkUtils
 
 
 class LoginFragment : Fragment() {
@@ -56,6 +52,14 @@ class LoginFragment : Fragment() {
             }
 
             override fun onError(e: FacebookException) {
+                Logger.log("Login onError ${e.message}")
+                if (!NetworkUtils.isNetworkAvailable(this@LoginFragment.context!!)) {
+                    Toast.makeText(
+                        this@LoginFragment.context,
+                        this@LoginFragment.resources.getString(R.string.error_no_internet),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         })
         return fragmentView

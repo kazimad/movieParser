@@ -5,7 +5,7 @@ import com.kazimad.movieparser.BuildConfig
 
 class Logger {
     companion object {
-        var LOGS_ENABLED = true
+        private var LOGS_ENABLED = true
 
         fun init() {
             LOGS_ENABLED =
