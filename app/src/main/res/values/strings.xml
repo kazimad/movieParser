@@ -10,8 +10,10 @@
 
     <string name="activity_films">films</string>
     <string name="activity_favorites">favorites</string>
-    <string name="title_activity_main2">Main2Activity</string>
-    <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="loading">loading</string>
+
+    <string name="error_text">Some thing went wrong </string>
+    <string name="error_no_suitable_app">No suitable app found! </string>
+    <string name="error_no_results">No results </string>
 
 </resources>

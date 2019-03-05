@@ -37,6 +37,9 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
     @Inject
     lateinit var apiSource: ApiSource
 
+    init {
+        Logger.log("MainFragmentViewModel init")
+    }
 
     //    private var compositeDisposable = CompositeDisposable()
     var moviesLiveData: MutableLiveData<List<SectionedMovieItem>?> = MutableLiveData()
@@ -68,10 +71,15 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun showFavorites() {
-        favoriteLiveData.value = sortAndFilterValues(pickFavoritesFromMoviewDatas())
+        favoriteLiveData.value = sortAndFilterValues(pickFavoritesFromMovieDatas())
     }
 
-    private fun pickFavoritesFromMoviewDatas(): MutableList<MovieData> {
+    fun showMovieItems() {
+        val listPrepared = sortAndFilterValues(allMoviesArray)
+        moviesLiveData.value = markFavorite(listPrepared)
+    }
+
+    private fun pickFavoritesFromMovieDatas(): MutableList<MovieData> {
         val result: MutableList<MovieData> = mutableListOf()
 
         allMoviesArray.forEach {
@@ -79,6 +87,7 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
                 result.add(it)
             }
         }
+        Logger.log("pickFavoritesFromMovieDatas allMoviesArray ${allMoviesArray.size}, favoriteIdsValues is $favoriteIdsValues")
         return result
     }
 
@@ -152,6 +161,7 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
             favoriteIdsValues.add(movieData.id)
         } else {
             favoriteIdsValues.remove(movieData.id)
+            showFavorites()
         }
     }
 
@@ -169,13 +179,13 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private fun sortAndFilterValues(unpreparedList: List<MovieData>): List<SectionedMovieItem> {
-        val result: MutableList<SectionedMovieItem> = mutableListOf()
+        val technical: MutableList<SectionedMovieItem> = mutableListOf()
         val sortedListByMonth = unpreparedList.sortedWith(compareBy { it.releaseDate })
         val fullFormat = fullDateFormat
         val shortFormat = shortFormat
         var currentMonth: Int = -1
 
-
+        Logger.log("unpreparedList is $unpreparedList")
         // separate by month
         sortedListByMonth.forEach {
             run {
@@ -187,20 +197,21 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
                 val month = cal.get(Calendar.MONTH)
 
                 if (month != currentMonth) {
-                    result.add(SectionedMovieItem(ListTypes.HEADER, null, dateShort))
-                    result.add(SectionedMovieItem(ListTypes.REGULAR, it, null))
+                    technical.add(SectionedMovieItem(ListTypes.HEADER, null, dateShort))
+                    technical.add(SectionedMovieItem(ListTypes.REGULAR, it, null))
                     currentMonth = month
                 } else {
-                    result.add(SectionedMovieItem(ListTypes.REGULAR, it, null))
+                    technical.add(SectionedMovieItem(ListTypes.REGULAR, it, null))
                 }
             }
         }
+        Logger.log("technical is $technical")
 
         //separate values in each collection by dates
         val rawHashMap = HashMap<String?, ArrayList<SectionedMovieItem>?>()
         var array: ArrayList<SectionedMovieItem>? = null
         var lastKey: String? = null
-        result.forEach {
+        technical.forEach {
             run {
                 if (it.type == ListTypes.HEADER) {
                     if (lastKey != null) {
@@ -219,6 +230,8 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
         val sortedHashMap = HashMap<String?, List<SectionedMovieItem>?>()
         rawHashMap.forEach { (key, value) ->
             run {
+                Logger.log("rawHashMap key is $key, value is $value")
+
                 val sortedList = value?.sortedWith(compareBy { it.value?.popularity })
                 sortedHashMap[key] = sortedList
             }
@@ -228,8 +241,11 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
         val sortedFilteredResult = ArrayList<SectionedMovieItem>()
         sortedHashMap.forEach { (key, value) ->
             run {
-                sortedFilteredResult.add(SectionedMovieItem(ListTypes.HEADER, null, key))
-                sortedFilteredResult.addAll(ArrayList(value))
+                if (value != null) {
+                    Logger.log("sortedHashMap key is $key, value is $value")
+                    sortedFilteredResult.add(SectionedMovieItem(ListTypes.HEADER, null, key))
+                    sortedFilteredResult.addAll(ArrayList(value))
+                }
             }
         }
 

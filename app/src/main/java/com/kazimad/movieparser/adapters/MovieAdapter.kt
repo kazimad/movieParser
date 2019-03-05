@@ -1,7 +1,5 @@
 package com.kazimad.movieparser.adapters
 
-import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,17 +18,19 @@ import com.kazimad.movieparser.utils.Logger
 import com.kazimad.movieparser.utils.glide.Glider
 
 
-class MovieAdapter(private val items: List<SectionedMovieItem>, val context: Context) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    var mainFragmentViewModel: MainFragmentViewModel? = null
-    var customClickListener: CustomClickListener? = null
+class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private var movieItems: MutableList<SectionedMovieItem>? = mutableListOf()
+    private var viewModel: MainFragmentViewModel? = null
+    private var customClickListener: CustomClickListener? = null
+
     private val viewTypeHeader = 1
     private val viewTypeItem = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             viewTypeHeader -> return ViewHolderHeader(
-                LayoutInflater.from(context).inflate(
+                LayoutInflater.from(parent.context).inflate(
                     R.layout.item_section_header,
                     parent,
                     false
@@ -38,7 +38,7 @@ class MovieAdapter(private val items: List<SectionedMovieItem>, val context: Con
             )
             else -> {
                 return ViewHolderItem(
-                    LayoutInflater.from(context).inflate(
+                    LayoutInflater.from(parent.context).inflate(
                         R.layout.item_movie,
                         parent,
                         false
@@ -49,51 +49,45 @@ class MovieAdapter(private val items: List<SectionedMovieItem>, val context: Con
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-//        Logger.log("getItemViewType holder.itemViewType is ${holder.itemViewType}")
-
-        when (holder.itemViewType) {
-            viewTypeHeader -> {
-                val viewHolderHeader = holder as ViewHolderHeader
-                val currentItem = items[position]
-                viewHolderHeader.header.text = currentItem.headerText
-            }
-            else -> {
-                val viewHolder = holder as ViewHolderItem
-                val currentItem = items[position].value
-                currentItem?.let {
-                    Glider.downloadOrShowErrorSimple(
-                        ApiProvider.baseImageUrl + currentItem.posterPath,
-                        viewHolder.avatar
-                    )
-                    viewHolder.headerText.text = currentItem.originalTitle
-                    viewHolder.descriptionText.text = currentItem.overview
-                    viewHolder.ratingText.text = currentItem.popularity.toString()
-                    viewHolder.favoriteText.text = if (!currentItem.isFavorite) context.getString(R.string.item_add_to_favorite) else context.getString(
-                        R.string.item_remove_from_favorite
-                    )
-                    viewHolder.favoriteContainer.setOnClickListener {
-                        mainFragmentViewModel?.let {
-                            Logger.log("currentItem.isFavorite is ${currentItem.isFavorite}")
-                            viewHolder.favoriteText.text = if (currentItem.isFavorite) context.getString(R.string.item_add_to_favorite) else context.getString(
-                                        R.string.item_remove_from_favorite
-                                    )
-                            if (currentItem.isFavorite) {
-                                mainFragmentViewModel!!.onMovieButtonClick(
-                                    MoviewItemClickVariant.REMOVE_FAVORITE,
-                                    currentItem
-                                )
-                            } else {
-                                mainFragmentViewModel!!.onMovieButtonClick(
-                                    MoviewItemClickVariant.ADD_FAVORITE,
-                                    currentItem
-                                )
+        movieItems?.let {
+            when (holder.itemViewType) {
+                viewTypeHeader -> {
+                    val viewHolderHeader = holder as ViewHolderHeader
+                    val currentItem = movieItems!![position]
+                    viewHolderHeader.header.text = currentItem.headerText
+                }
+                else -> {
+                    val viewHolder = holder as ViewHolderItem
+                    val currentItem = movieItems!![position].value
+                    currentItem?.let {
+                        Glider.downloadOrShowErrorSimple(
+                            ApiProvider.baseImageUrl + currentItem.posterPath,
+                            viewHolder.avatar
+                        )
+                        viewHolder.headerText.text = currentItem.originalTitle
+                        viewHolder.descriptionText.text = currentItem.overview
+                        viewHolder.ratingText.text = currentItem.popularity.toString()
+                        viewHolder.favoriteText.text =
+                                if (!currentItem.isFavorite) viewHolder.favoriteText.context.getString(R.string.item_add_to_favorite)
+                                else viewHolder.favoriteText.context.getString(R.string.item_remove_from_favorite)
+                        viewHolder.favoriteContainer.setOnClickListener {
+                            viewModel?.let {
+                                Logger.log("currentItem.isFavorite is ${currentItem.isFavorite}")
+                                viewHolder.favoriteText.text =
+                                        if (currentItem.isFavorite) viewHolder.favoriteContainer.context.getString(R.string.item_add_to_favorite)
+                                        else viewHolder.favoriteContainer.context.getString(R.string.item_remove_from_favorite)
+                                if (currentItem.isFavorite) {
+                                    viewModel!!.onMovieButtonClick(MoviewItemClickVariant.REMOVE_FAVORITE, currentItem)
+                                } else {
+                                    viewModel!!.onMovieButtonClick(MoviewItemClickVariant.ADD_FAVORITE, currentItem)
+                                }
+                                currentItem.isFavorite = !currentItem.isFavorite
+                                notifyDataSetChanged()
                             }
-                            currentItem.isFavorite = !currentItem.isFavorite
-                            notifyDataSetChanged();
                         }
-                    }
-                    viewHolder.shareContainer.setOnClickListener {
-                        customClickListener?.onCustomClick(ClickVariants.SHARE_CLICK, currentItem)
+                        viewHolder.shareContainer.setOnClickListener {
+                            customClickListener?.onCustomClick(ClickVariants.SHARE_CLICK, currentItem)
+                        }
                     }
                 }
             }
@@ -102,38 +96,45 @@ class MovieAdapter(private val items: List<SectionedMovieItem>, val context: Con
     }
 
     override fun getItemCount(): Int {
-        return items.size
+        return if (movieItems != null) movieItems!!.size else -1
     }
 
     override fun getItemViewType(position: Int): Int {
-//        Logger.log("getItemViewType items[position].type is ${items[position].type}")
-        return when (items[position].type) {
-            ListTypes.HEADER -> viewTypeHeader
-            else -> {
-                viewTypeItem
+        return if (movieItems != null) {
+            when (movieItems!![position].type) {
+                ListTypes.HEADER -> viewTypeHeader
+                else -> {
+                    viewTypeItem
+                }
             }
+        } else {
+            -1
         }
     }
 
     fun setVieModel(mainFragmentViewModel: MainFragmentViewModel) {
-        this.mainFragmentViewModel = mainFragmentViewModel
+        this.viewModel = mainFragmentViewModel
     }
 
     fun setCustomClick(customClickListener: CustomClickListener) {
         this.customClickListener = customClickListener
     }
+
+    fun setItems(items: List<SectionedMovieItem>?) {
+        movieItems = items as MutableList<SectionedMovieItem>
+    }
 }
 
 class ViewHolderItem(view: View) : RecyclerView.ViewHolder(view) {
-    var avatar = view.findViewById<ImageView>(R.id.avatar)
-    var headerText = view.findViewById<TextView>(R.id.headerTV)
-    var descriptionText = view.findViewById<TextView>(R.id.descriptionTV)
-    var ratingText = view.findViewById<TextView>(R.id.ratingTV)
-    var favoriteContainer = view.findViewById<LinearLayout>(R.id.favoriteContainer)
-    var favoriteText = view.findViewById<TextView>(R.id.favoriteText)
-    var shareContainer = view.findViewById<LinearLayout>(R.id.shareContainer)
+    var avatar = view.findViewById<ImageView>(R.id.avatar)!!
+    var headerText = view.findViewById<TextView>(R.id.headerTV)!!
+    var descriptionText = view.findViewById<TextView>(R.id.descriptionTV)!!
+    var ratingText = view.findViewById<TextView>(R.id.ratingTV)!!
+    var favoriteContainer = view.findViewById<LinearLayout>(R.id.favoriteContainer)!!
+    var favoriteText = view.findViewById<TextView>(R.id.favoriteText)!!
+    var shareContainer = view.findViewById<LinearLayout>(R.id.shareContainer)!!
 }
 
 class ViewHolderHeader(view: View) : RecyclerView.ViewHolder(view) {
-    var header = view.findViewById<TextView>(R.id.headerTV)
+    var header = view.findViewById<TextView>(R.id.headerTV)!!
 }

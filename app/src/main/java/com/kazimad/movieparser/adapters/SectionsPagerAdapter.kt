@@ -6,22 +6,35 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.kazimad.movieparser.InterfaceFragment
 import com.kazimad.movieparser.ui.favorite.FavoriteFragment
 import com.kazimad.movieparser.ui.main.MainFragment
-import com.kazimad.movieparser.utils.Logger
 
 class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
-    lateinit var currentFragment: Fragment
+    lateinit var favoriteFargmnet: FavoriteFragment
+    lateinit var mainFragment: MainFragment
     override fun getItem(position: Int): Fragment {
 
         when (position) {
-            1 -> currentFragment = FavoriteFragment()
-            0 -> currentFragment = MainFragment()
+            1 -> {
+                return if (::favoriteFargmnet.isInitialized) {
+                    favoriteFargmnet
+                } else {
+                    favoriteFargmnet = FavoriteFragment()
+                    return favoriteFargmnet
+                }
+            }
+            else -> {
+                return if (::mainFragment.isInitialized) {
+                    mainFragment
+                } else {
+                    mainFragment = MainFragment()
+                    return mainFragment
+                }
+            }
         }
-        return currentFragment
     }
+
 
     override fun getCount(): Int {
         return 2
