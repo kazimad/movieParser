@@ -5,24 +5,11 @@
     <color name="colorAccent">#D81B60</color>
 
     <color name="white">#ffffff</color>
-    <color name="pale_grey">#f7f7fa</color>
     <color name="pale_grey_two">#edecf1</color>
-    <color name="heather">#aeabb3</color>
-    <color name="dark">#2a2731</color>
-    <color name="very_light_pink">#fdf4f4</color>
     <color name="tomato">#ed3535</color>
-    <color name="purplish_grey">#7c7a80</color>
-    <color name="french_blue">#4265ad</color>
-    <color name="dodger_blue">#4285f4</color>
-    <color name="beige">#f0c8c0</color>
     <color name="tomato_two">#ed5435</color>
-    <color name="light_grey">#e6e6e6</color>
-    <color name="dark_mint">#54c166</color>
-    <color name="black">#030303</color>
-    <color name="dark_mint_two">#54c065</color>
-    <color name="pale_grey_three">#dbd9e0</color>
-    <color name="silver">#c3c0cc</color>
     <color name="lightish_green">#4cd964</color>
     <color name="semi_transparent_white">#78ffffff</color>
-    <color name="progress">#0091EA</color>
+    <color name="blue">#FF536DFE</color>
+
 </resources>

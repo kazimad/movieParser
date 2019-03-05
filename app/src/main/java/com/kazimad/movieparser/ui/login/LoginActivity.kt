@@ -14,6 +14,7 @@ class LoginActivity : AppCompatActivity(), InterfaceActivity {
     private lateinit var viewModel: LoginActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         viewModel = ViewModelProviders.of(this).get(LoginActivityViewModel::class.java)
