@@ -1,11 +1,13 @@
-package com.kazimad.movieparser.persistance
+package com.kazimad.movieparser.persistance.data_sources
 
 import com.kazimad.movieparser.models.FavoriteData
-import com.kazimad.movieparser.utils.Logger
+import com.kazimad.movieparser.persistance.db_repositories.FavoriteInterface
+import com.kazimad.movieparser.persistance.daos.FavoriteDao
 import javax.inject.Inject
 
-class FavoriteDataSource @Inject
-constructor(private val favoriteDao: FavoriteDao) : FavoriteRepository {
+class FavoriteDbDataSource @Inject
+constructor(private val favoriteDao: FavoriteDao) :
+    FavoriteInterface {
 
     override fun insertAllFavoriteDatas(listFavoriteDatas: List<FavoriteData>) {
         favoriteDao.insertAllFavoriteDatas(*listFavoriteDatas.toTypedArray())
@@ -20,7 +22,6 @@ constructor(private val favoriteDao: FavoriteDao) : FavoriteRepository {
     }
 
     override fun insertFavorites(favoriteData: FavoriteData) {
-        Logger.log("FavoriteDataSource insertFavorites ${favoriteData.id}")
         favoriteDao.insertFavorites(favoriteData)
     }
 

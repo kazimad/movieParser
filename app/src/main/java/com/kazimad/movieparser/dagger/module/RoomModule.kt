@@ -3,6 +3,12 @@ package com.kazimad.movieparser.dagger.module
 import android.content.Context
 import androidx.room.Room
 import com.kazimad.movieparser.persistance.*
+import com.kazimad.movieparser.persistance.daos.FavoriteDao
+import com.kazimad.movieparser.persistance.daos.MovieDao
+import com.kazimad.movieparser.persistance.data_sources.MovieDbDataSource
+import com.kazimad.movieparser.persistance.data_sources.FavoriteDbDataSource
+import com.kazimad.movieparser.persistance.db_repositories.FavoriteInterface
+import com.kazimad.movieparser.persistance.db_repositories.MovieInterface
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -34,13 +40,13 @@ class RoomModule {
 
     @Singleton
     @Provides
-    internal fun movieRepository(movieDao: MovieDao): DbRepository {
-        return DbDataSource(movieDao)
+    internal fun movieRepository(movieDao: MovieDao): MovieInterface {
+        return MovieDbDataSource(movieDao)
     }
 
     @Singleton
     @Provides
-    internal fun favoriteRepository(favoriteDao: FavoriteDao): FavoriteRepository {
-        return FavoriteDataSource(favoriteDao)
+    internal fun favoriteRepository(favoriteDao: FavoriteDao): FavoriteInterface {
+        return FavoriteDbDataSource(favoriteDao)
     }
 }

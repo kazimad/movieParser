@@ -3,70 +3,26 @@ package com.kazimad.movieparser.ui.main
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.kazimad.movieparser.dagger.component.DaggerMainComponent
+import com.kazimad.movieparser.App
 import com.kazimad.movieparser.dagger.enums.MovieItemClickVariant
-import com.kazimad.movieparser.dagger.module.ApiModule
-import com.kazimad.movieparser.dagger.module.ContextModule
-import com.kazimad.movieparser.dagger.module.RoomModule
-import com.kazimad.movieparser.enums.ListTypes
-import com.kazimad.movieparser.models.FavoriteData
 import com.kazimad.movieparser.models.MovieData
 import com.kazimad.movieparser.models.SectionedMovieItem
-import com.kazimad.movieparser.models.response.TopResponse
-import com.kazimad.movieparser.persistance.DbDataSource
-import com.kazimad.movieparser.persistance.FavoriteDataSource
-import com.kazimad.movieparser.remote.ApiSource
-import com.kazimad.movieparser.utils.Constants
-import com.kazimad.movieparser.utils.Constants.Companion.fullDateFormat
-import com.kazimad.movieparser.utils.Constants.Companion.shortFormat
-import kotlinx.coroutines.*
-import retrofit2.HttpException
-import java.util.*
-import javax.inject.Inject
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
 class MainFragmentViewModel(application: Application) : AndroidViewModel(application) {
-
-    init {
-        DaggerMainComponent.builder()
-            .contextModule(ContextModule(application.applicationContext))
-            .apiModule(ApiModule())
-            .roomModule(RoomModule())
-            .build()
-            .injectToMainFragmentViewModel(this)
-    }
-
-    @Inject
-    lateinit var dbSource: DbDataSource
-    @Inject
-    lateinit var favoriteDataSource: FavoriteDataSource
-    @Inject
-    lateinit var apiSource: ApiSource
 
     var moviesLiveData: MutableLiveData<List<SectionedMovieItem>?> = MutableLiveData()
     var favoriteLiveData: MutableLiveData<List<SectionedMovieItem>?> = MutableLiveData()
     var errorLiveData: MutableLiveData<Throwable> = MutableLiveData()
 
-    private var favoritesArray: MutableList<FavoriteData> = mutableListOf()
-    private var allMoviesArray: MutableList<MovieData> = mutableListOf()
-    private val favoriteIdsValues: MutableList<Int> = mutableListOf()
 
-
-    private fun getAllFavorites(): Job {
-        return GlobalScope.launch {
-            withContext(Dispatchers.Main) {
-                favoritesArray = favoriteDataSource.getAllFavorites() as MutableList<FavoriteData>
-                favoritesArray.forEach { favoriteIdsValues.add(it.id) }
-                val listPrepared = sortAndFilterValues(allMoviesArray)
-                favoriteLiveData.value = markFavorite(listPrepared)
-            }
-        }
+    fun getAllMovies() {
+        App.mainComponent.getApiRepository().getAllMovies(errorLiveData, moviesLiveData)
     }
 
     fun showFavorites() {
-        favoriteLiveData.value = sortAndFilterValues(pickFavoritesFromMovieDatas())
+        App.mainComponent.getApiRepository()
+            .sortAndFilterValuesLiveData(pickFavoritesFromMovieDatas(), favoriteLiveData)
     }
 
     fun showMovieItems() {
@@ -84,58 +40,7 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
         return result
     }
 
-    fun saveFavorites() {
-        if (favoriteIdsValues.isNotEmpty()) {
-            GlobalScope.launch {
-                withContext(Dispatchers.Main) {
-                    favoriteDataSource.deleteAllFavorites()
-                    favoritesArray.clear()
-                    favoriteIdsValues.forEach { favoritesArray.add(FavoriteData(it)) }
-                    favoriteDataSource.insertAllFavoriteDatas(favoritesArray)
-                }
-            }
-        }
-    }
 
-    fun getAllMovies() {
-        GlobalScope.launch {
-            withContext(Dispatchers.Main) {
-                val request =
-                    apiSource.apiInterface?.getList(
-                        Constants.API_KEY,
-                        Constants.API_SORT_BY,
-                        getCurrentDateAndFormat(),
-                        getFutureDateAndFormat()
-                    )
-                try {
-                    val response = request?.await()
-
-                    dbSource.deleteAll()
-                    dbSource.insertAll((response?.body() as TopResponse).results)
-
-                } catch (e: HttpException) {
-                    errorLiveData.value = e
-                } catch (e: Throwable) {
-                    errorLiveData.value = e
-                } finally {
-                    allMoviesArray = ArrayList(dbSource.findAll())
-
-                    val jobGetFavorite = getAllFavorites()
-                    jobGetFavorite.join()
-
-                    val listPrepared = sortAndFilterValues(allMoviesArray)
-                    moviesLiveData.value = markFavorite(listPrepared)
-                }
-            }
-        }
-    }
-
-    private fun markFavorite(listSorted: List<SectionedMovieItem>): List<SectionedMovieItem> {
-        listSorted.forEach {
-            it.value?.isFavorite = favoriteIdsValues.contains(it.value?.id)
-        }
-        return listSorted
-    }
 
     fun onMovieButtonClick(clickVariant: MovieItemClickVariant, movieData: MovieData) {
         when (clickVariant) {
@@ -148,7 +53,6 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-
     private fun workWithLocalFavoriteDatas(movieData: MovieData, insert: Boolean) {
         if (insert) {
             favoriteIdsValues.add(movieData.id)
@@ -158,90 +62,5 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    private fun getCurrentDateAndFormat(): String {
-        val cal = Calendar.getInstance()!!
-        val dt = cal.time
-        return fullDateFormat.format(dt)
-    }
 
-    private fun getFutureDateAndFormat(): String {
-        val cal = Calendar.getInstance()!!
-        cal.add(Calendar.MONTH, 3)
-        val dt = cal.time
-        return fullDateFormat.format(dt)
-    }
-
-    private fun sortAndFilterValues(unpreparedList: List<MovieData>): List<SectionedMovieItem> {
-        val technical: MutableList<SectionedMovieItem> = mutableListOf()
-        val sortedListByMonth = unpreparedList.sortedWith(compareBy { it.releaseDate })
-        val fullFormat = fullDateFormat
-        val shortFormat = shortFormat
-        var currentMonth: Int = -1
-
-        // separate by month
-        sortedListByMonth.forEach {
-            run {
-                val releaseDate = it.releaseDate
-                val dateFull = fullFormat.parse(releaseDate)
-                val dateShort = shortFormat.format(dateFull)
-                val cal = Calendar.getInstance()!!
-                cal.time = dateFull
-                val month = cal.get(Calendar.MONTH)
-
-                if (month != currentMonth) {
-                    technical.add(SectionedMovieItem(ListTypes.HEADER, null, dateShort))
-                    technical.add(SectionedMovieItem(ListTypes.REGULAR, it, null))
-                    currentMonth = month
-                } else {
-                    technical.add(SectionedMovieItem(ListTypes.REGULAR, it, null))
-                }
-            }
-        }
-
-        //separate values in each collection by dates
-        val rawHashMap = HashMap<String?, ArrayList<SectionedMovieItem>?>()
-        var array: ArrayList<SectionedMovieItem>? = null
-        var lastKey: String? = null
-        technical.forEach {
-            run {
-                if (it.type == ListTypes.HEADER) {
-                    if (lastKey != null) {
-                        rawHashMap[lastKey] = array
-                    }
-                    lastKey = it.headerText
-                    array = ArrayList()
-                } else {
-                    array?.add(it)
-                }
-            }
-        }
-        rawHashMap[lastKey] = array
-
-        //sort each value list by popularity
-        val sortedHashMap = HashMap<String?, List<SectionedMovieItem>?>()
-        rawHashMap.forEach { (key, value) ->
-            run {
-                val sortedList = value?.sortedWith(compareBy { it.value?.popularity })
-                sortedHashMap[key] = sortedList
-            }
-        }
-
-        // compose sortered values and headers
-        val sortedFilteredResult = ArrayList<SectionedMovieItem>()
-        sortedHashMap.forEach { (key, value) ->
-            run {
-                if (value != null) {
-                    sortedFilteredResult.add(
-                        SectionedMovieItem(
-                            ListTypes.HEADER,
-                            null,
-                            key
-                        )
-                    )
-                    sortedFilteredResult.addAll(ArrayList(value))
-                }
-            }
-        }
-        return sortedFilteredResult
-    }
 }

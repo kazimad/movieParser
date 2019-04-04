@@ -5,6 +5,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.kazimad.movieparser.models.FavoriteData
 import com.kazimad.movieparser.models.MovieData
+import com.kazimad.movieparser.persistance.daos.FavoriteDao
+import com.kazimad.movieparser.persistance.daos.MovieDao
 
 @Database(entities = [MovieData::class, FavoriteData::class], version = 1)
 @TypeConverters(DataConverter::class)

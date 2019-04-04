@@ -1,4 +1,4 @@
-package com.kazimad.movieparser.persistance
+package com.kazimad.movieparser.persistance.daos
 
 import androidx.room.*
 import com.kazimad.movieparser.models.FavoriteData

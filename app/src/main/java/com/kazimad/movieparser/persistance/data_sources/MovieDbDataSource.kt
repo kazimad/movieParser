@@ -1,11 +1,13 @@
-package com.kazimad.movieparser.persistance
+package com.kazimad.movieparser.persistance.data_sources
 
 import com.kazimad.movieparser.models.MovieData
+import com.kazimad.movieparser.persistance.db_repositories.MovieInterface
+import com.kazimad.movieparser.persistance.daos.MovieDao
 import javax.inject.Inject
 
 
-class DbDataSource @Inject
-constructor(private val movieDao: MovieDao) : DbRepository {
+class MovieDbDataSource @Inject
+constructor(private val movieDao: MovieDao) : MovieInterface {
 
     override fun update(movieData: MovieData) {
         return movieDao.updateMovieData(movieData)

@@ -1,19 +1,20 @@
 package com.kazimad.movieparser.dagger.component
 
-import com.kazimad.movieparser.App
-import com.kazimad.movieparser.adapters.MovieAdapter
-import com.kazimad.movieparser.dagger.module.ApiModule
+import com.kazimad.movieparser.dagger.module.AppModule
 import com.kazimad.movieparser.dagger.module.ContextModule
 import com.kazimad.movieparser.dagger.module.RoomModule
-import com.kazimad.movieparser.ui.main.MainFragmentViewModel
+import com.kazimad.movieparser.persistance.DbRepository
+import com.kazimad.movieparser.persistance.data_sources.FavoriteDbDataSource
+import com.kazimad.movieparser.remote.ApiSource
+import com.kazimad.movieparser.remote.ApiRepository
 import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [ApiModule::class, RoomModule::class, ContextModule::class])
+@Component(modules = [AppModule::class, RoomModule::class, ContextModule::class])
 interface MainComponent {
 
-    fun inject(app: App)
-    fun injectToMainFragmentViewModel(mainFragmentViewModel: MainFragmentViewModel)
-    fun injectToMovieAdapter(movieAdapter: MovieAdapter)
+    fun getApi(): ApiSource
+    fun getDbRepository(): DbRepository
+    fun getApiRepository(): ApiRepository
 }

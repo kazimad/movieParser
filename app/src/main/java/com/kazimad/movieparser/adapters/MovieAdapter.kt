@@ -13,9 +13,7 @@ import com.kazimad.movieparser.enums.ClickVariants
 import com.kazimad.movieparser.enums.ListTypes
 import com.kazimad.movieparser.interfaces.CustomClickListener
 import com.kazimad.movieparser.models.SectionedMovieItem
-import com.kazimad.movieparser.remote.ApiProvider
 import com.kazimad.movieparser.ui.main.MainFragmentViewModel
-import com.kazimad.movieparser.utils.glide.Glider
 
 
 class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -60,10 +58,10 @@ class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     val viewHolder = holder as ViewHolderItem
                     val currentItem = movieItems!![position].value
                     currentItem?.let {
-                        Glider.downloadOrShowErrorSimple(
-                            ApiProvider.baseImageUrl + currentItem.posterPath,
-                            viewHolder.avatar
-                        )
+//                        Glider.downloadOrShowErrorSimple(
+//                            ApiProvider.baseImageUrl + currentItem.posterPath,
+//                            viewHolder.avatar
+//                        )
                         viewHolder.headerText.text = currentItem.originalTitle
                         viewHolder.descriptionText.text = currentItem.overview
                         viewHolder.ratingText.text = currentItem.popularity.toString()

@@ -1,8 +1,8 @@
-package com.kazimad.movieparser.persistance
+package com.kazimad.movieparser.persistance.db_repositories
 
 import com.kazimad.movieparser.models.FavoriteData
 
-interface FavoriteRepository {
+interface FavoriteInterface {
     fun getFavoriteById(id: Int): FavoriteData
 
     fun insertFavorites(favoriteData: FavoriteData)
