@@ -7,8 +7,8 @@ import androidx.viewpager.widget.ViewPager
 import com.facebook.Profile
 import com.facebook.ProfileTracker
 import com.google.android.material.tabs.TabLayout
-import com.kazimad.movieparser.InterfaceActivity
-import com.kazimad.movieparser.InterfaceFragment
+import com.kazimad.movieparser.interfaces.InterfaceActivity
+import com.kazimad.movieparser.interfaces.InterfaceFragment
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.adapters.SectionsPagerAdapter
 import com.kazimad.movieparser.utils.glide.Glider

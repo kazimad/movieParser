@@ -22,7 +22,7 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
 
     fun showFavorites() {
         App.mainComponent.getRepository().sortAndFilterValuesLiveData(
-            App.mainComponent.getRepository().pickFavoritesFromMovieDatas(),
+            App.mainComponent.getRepository().pickFavoritesFromMovieData(),
             favoriteLiveData
         )
     }

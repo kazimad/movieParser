@@ -1,4 +1,4 @@
-package com.kazimad.movieparser.persistance.daos
+package com.kazimad.movieparser.sources.persistance.daos
 
 import androidx.room.*
 import com.kazimad.movieparser.entities.MovieData

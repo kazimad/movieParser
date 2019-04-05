@@ -8,7 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.kazimad.movieparser.InterfaceFragment
+import com.kazimad.movieparser.interfaces.InterfaceFragment
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.interfaces.CustomClickListener
 import com.kazimad.movieparser.ui.BaseMovieFragment

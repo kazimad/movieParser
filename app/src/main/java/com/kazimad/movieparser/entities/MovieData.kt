@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
-import com.kazimad.movieparser.persistance.DataConverter
+import com.kazimad.movieparser.sources.persistance.DataConverter
 
 @Entity
 data class MovieData(

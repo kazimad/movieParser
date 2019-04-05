@@ -12,7 +12,7 @@ import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
-import com.kazimad.movieparser.InterfaceActivity
+import com.kazimad.movieparser.interfaces.InterfaceActivity
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.utils.Logger
 import com.kazimad.movieparser.utils.NetworkUtils

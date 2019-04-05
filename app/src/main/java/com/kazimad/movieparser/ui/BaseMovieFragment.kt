@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kazimad.movieparser.App
-import com.kazimad.movieparser.InterfaceActivity
+import com.kazimad.movieparser.interfaces.InterfaceActivity
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.adapters.MovieAdapter
 import com.kazimad.movieparser.enums.ClickVariants
@@ -21,6 +21,7 @@ import com.kazimad.movieparser.interfaces.CustomClickListener
 import com.kazimad.movieparser.entities.MovieData
 import com.kazimad.movieparser.entities.SectionedMovieItem
 import com.kazimad.movieparser.ui.main.MainFragmentViewModel
+import com.kazimad.movieparser.utils.Logger
 import com.kazimad.movieparser.utils.NetworkUtils
 import retrofit2.HttpException
 
@@ -87,7 +88,7 @@ abstract class BaseMovieFragment : Fragment(), CustomClickListener {
         loadingContainer.visibility = View.GONE
         adapter.setItems(result)
         adapter.notifyDataSetChanged()
-
+        Logger.log("onMoviesObserved result is ${result?.size}")
         if (result == null || result.isEmpty()) {
             noResultsText.visibility = View.VISIBLE
         } else {

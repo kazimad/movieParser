@@ -2,7 +2,7 @@ package com.kazimad.movieparser.dagger.module
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.kazimad.movieparser.BuildConfig
-import com.kazimad.movieparser.remote.ApiSource
+import com.kazimad.movieparser.sources.remote.ApiSource
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient

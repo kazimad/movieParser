@@ -1,4 +1,4 @@
-package com.kazimad.movieparser.persistance.db_repositories
+package com.kazimad.movieparser.sources.persistance.db_repositories
 
 import com.kazimad.movieparser.entities.FavoriteData
 

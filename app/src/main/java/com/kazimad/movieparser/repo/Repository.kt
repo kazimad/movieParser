@@ -6,32 +6,29 @@ import com.kazimad.movieparser.entities.MovieData
 import com.kazimad.movieparser.entities.SectionedMovieItem
 import com.kazimad.movieparser.entities.response.TopResponse
 import com.kazimad.movieparser.enums.ListTypes
-import com.kazimad.movieparser.persistance.data_sources.FavoriteDbDataSource
-import com.kazimad.movieparser.persistance.data_sources.MovieDbDataSource
-import com.kazimad.movieparser.remote.ApiSource
+import com.kazimad.movieparser.sources.persistance.data_sources.FavoriteDbDataSource
+import com.kazimad.movieparser.sources.persistance.data_sources.MovieDbDataSource
+import com.kazimad.movieparser.sources.remote.ApiSource
 import com.kazimad.movieparser.utils.Constants
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class Repository @Inject constructor(
-    favoriteDataSource: FavoriteDbDataSource,
-    movieDbDataSource: MovieDbDataSource,
-    apiSource: ApiSource
+    var favoriteDataSource: FavoriteDbDataSource,
+    var movieDbDataSource: MovieDbDataSource,
+    var apiSource: ApiSource
 ) {
-
-    var favoriteDataSource = favoriteDataSource
-    var movieDbDataSource = movieDbDataSource
-    var apiSource: ApiSource = apiSource
 
     private var favoritesArray: MutableList<FavoriteData> = mutableListOf()
     var favoriteIdsValues: MutableList<Int> = mutableListOf()
-        private set
     private var allMoviesArray: MutableList<MovieData> = mutableListOf()
 
 
-    fun pickFavoritesFromMovieDatas(): MutableList<MovieData> {
+    fun pickFavoritesFromMovieData(): MutableList<MovieData> {
         val result: MutableList<MovieData> = mutableListOf()
         allMoviesArray.forEach {
             if (favoriteIdsValues.contains(it.id)) {

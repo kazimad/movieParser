@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.kazimad.movieparser.InterfaceActivity
+import com.kazimad.movieparser.interfaces.InterfaceActivity
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.ui.main.MainActivity
 import com.kazimad.movieparser.utils.ActivityUtils

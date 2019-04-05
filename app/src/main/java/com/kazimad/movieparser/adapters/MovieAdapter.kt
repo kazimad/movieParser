@@ -13,7 +13,7 @@ import com.kazimad.movieparser.enums.ClickVariants
 import com.kazimad.movieparser.enums.ListTypes
 import com.kazimad.movieparser.interfaces.CustomClickListener
 import com.kazimad.movieparser.entities.SectionedMovieItem
-import com.kazimad.movieparser.remote.ApiSource
+import com.kazimad.movieparser.sources.remote.ApiSource
 import com.kazimad.movieparser.ui.main.MainFragmentViewModel
 import com.kazimad.movieparser.utils.glide.Glider
 

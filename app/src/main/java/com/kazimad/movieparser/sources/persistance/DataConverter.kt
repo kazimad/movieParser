@@ -1,4 +1,4 @@
-package com.kazimad.movieparser.persistance
+package com.kazimad.movieparser.sources.persistance
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson

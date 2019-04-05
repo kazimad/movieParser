@@ -1,4 +1,4 @@
-package com.kazimad.movieparser.remote
+package com.kazimad.movieparser.sources.remote
 
 import com.kazimad.movieparser.entities.response.TopResponse
 import kotlinx.coroutines.Deferred
