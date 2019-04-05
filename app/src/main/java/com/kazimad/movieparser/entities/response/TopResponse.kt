@@ -1,6 +1,6 @@
-package com.kazimad.movieparser.models.response
+package com.kazimad.movieparser.entities.response
 
-import com.kazimad.movieparser.models.MovieData
+import com.kazimad.movieparser.entities.MovieData
 
 data class TopResponse(
     val page: Int,

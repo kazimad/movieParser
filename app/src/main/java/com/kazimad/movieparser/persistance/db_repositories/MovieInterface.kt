@@ -1,6 +1,6 @@
 package com.kazimad.movieparser.persistance.db_repositories
 
-import com.kazimad.movieparser.models.MovieData
+import com.kazimad.movieparser.entities.MovieData
 
 
 interface MovieInterface {

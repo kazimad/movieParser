@@ -5,8 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.kazimad.movieparser.App
 import com.kazimad.movieparser.dagger.enums.MovieItemClickVariant
-import com.kazimad.movieparser.models.MovieData
-import com.kazimad.movieparser.models.SectionedMovieItem
+import com.kazimad.movieparser.entities.MovieData
+import com.kazimad.movieparser.entities.SectionedMovieItem
 
 
 class MainFragmentViewModel(application: Application) : AndroidViewModel(application) {
@@ -17,50 +17,42 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
 
 
     fun getAllMovies() {
-        App.mainComponent.getApiRepository().getAllMovies(errorLiveData, moviesLiveData)
+        App.mainComponent.getRepository().getAllMovies(errorLiveData, moviesLiveData, favoriteLiveData)
     }
 
     fun showFavorites() {
-        App.mainComponent.getApiRepository()
-            .sortAndFilterValuesLiveData(pickFavoritesFromMovieDatas(), favoriteLiveData)
+        App.mainComponent.getRepository().sortAndFilterValuesLiveData(
+            App.mainComponent.getRepository().pickFavoritesFromMovieDatas(),
+            favoriteLiveData
+        )
+    }
+
+    fun saveFavorites() {
+        App.mainComponent.getRepository().saveFavorites()
     }
 
     fun showMovieItems() {
-        val listPrepared = sortAndFilterValues(allMoviesArray)
-        moviesLiveData.value = markFavorite(listPrepared)
+        App.mainComponent.getRepository().showAllFavorite(moviesLiveData)
     }
-
-    private fun pickFavoritesFromMovieDatas(): MutableList<MovieData> {
-        val result: MutableList<MovieData> = mutableListOf()
-        allMoviesArray.forEach {
-            if (favoriteIdsValues.contains(it.id)) {
-                result.add(it)
-            }
-        }
-        return result
-    }
-
 
 
     fun onMovieButtonClick(clickVariant: MovieItemClickVariant, movieData: MovieData) {
         when (clickVariant) {
             MovieItemClickVariant.ADD_FAVORITE -> {
-                workWithLocalFavoriteDatas(movieData, true)
+                workWithLocalFavoriteData(movieData, true)
             }
             MovieItemClickVariant.REMOVE_FAVORITE -> {
-                workWithLocalFavoriteDatas(movieData, false)
+                workWithLocalFavoriteData(movieData, false)
             }
         }
     }
 
-    private fun workWithLocalFavoriteDatas(movieData: MovieData, insert: Boolean) {
+    private fun workWithLocalFavoriteData(movieData: MovieData, insert: Boolean) {
         if (insert) {
-            favoriteIdsValues.add(movieData.id)
+            App.mainComponent.getRepository().favoriteIdsValues.add(movieData.id)
         } else {
-            favoriteIdsValues.remove(movieData.id)
+            App.mainComponent.getRepository().favoriteIdsValues.remove(movieData.id)
             showFavorites()
         }
     }
-
-
 }

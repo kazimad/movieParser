@@ -4,8 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.kazimad.movieparser.models.FavoriteData
-import com.kazimad.movieparser.models.MovieData
+import com.kazimad.movieparser.entities.FavoriteData
 
 @Dao
 interface FavoriteDao {

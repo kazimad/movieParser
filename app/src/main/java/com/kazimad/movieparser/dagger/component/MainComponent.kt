@@ -3,10 +3,8 @@ package com.kazimad.movieparser.dagger.component
 import com.kazimad.movieparser.dagger.module.AppModule
 import com.kazimad.movieparser.dagger.module.ContextModule
 import com.kazimad.movieparser.dagger.module.RoomModule
-import com.kazimad.movieparser.persistance.DbRepository
-import com.kazimad.movieparser.persistance.data_sources.FavoriteDbDataSource
 import com.kazimad.movieparser.remote.ApiSource
-import com.kazimad.movieparser.remote.ApiRepository
+import com.kazimad.movieparser.repo.Repository
 import dagger.Component
 import javax.inject.Singleton
 
@@ -15,6 +13,5 @@ import javax.inject.Singleton
 interface MainComponent {
 
     fun getApi(): ApiSource
-    fun getDbRepository(): DbRepository
-    fun getApiRepository(): ApiRepository
+    fun getRepository(): Repository
 }

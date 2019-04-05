@@ -1,57 +1,80 @@
-package com.kazimad.movieparser.remote
+package com.kazimad.movieparser.repo
 
 import androidx.lifecycle.MutableLiveData
+import com.kazimad.movieparser.entities.FavoriteData
+import com.kazimad.movieparser.entities.MovieData
+import com.kazimad.movieparser.entities.SectionedMovieItem
+import com.kazimad.movieparser.entities.response.TopResponse
 import com.kazimad.movieparser.enums.ListTypes
-import com.kazimad.movieparser.models.MovieData
-import com.kazimad.movieparser.models.SectionedMovieItem
-import com.kazimad.movieparser.models.response.TopResponse
-import com.kazimad.movieparser.persistance.DbRepository
+import com.kazimad.movieparser.persistance.data_sources.FavoriteDbDataSource
 import com.kazimad.movieparser.persistance.data_sources.MovieDbDataSource
+import com.kazimad.movieparser.remote.ApiSource
 import com.kazimad.movieparser.utils.Constants
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import retrofit2.HttpException
 import java.util.*
 import javax.inject.Inject
 
-class ApiRepository @Inject constructor(apiSource: ApiSource, dbRepository: DbRepository) {
+class Repository @Inject constructor(
+    favoriteDataSource: FavoriteDbDataSource,
+    movieDbDataSource: MovieDbDataSource,
+    apiSource: ApiSource
+) {
 
+    var favoriteDataSource = favoriteDataSource
+    var movieDbDataSource = movieDbDataSource
     var apiSource: ApiSource = apiSource
-    var dbRepository: DbRepository = dbRepository
 
+    private var favoritesArray: MutableList<FavoriteData> = mutableListOf()
+    var favoriteIdsValues: MutableList<Int> = mutableListOf()
+        private set
     private var allMoviesArray: MutableList<MovieData> = mutableListOf()
 
 
+    fun pickFavoritesFromMovieDatas(): MutableList<MovieData> {
+        val result: MutableList<MovieData> = mutableListOf()
+        allMoviesArray.forEach {
+            if (favoriteIdsValues.contains(it.id)) {
+                result.add(it)
+            }
+        }
+        return result
+    }
+
+
+    fun showAllFavorite(moviesLiveData: MutableLiveData<List<SectionedMovieItem>?>) {
+        moviesLiveData.value = markFavorite(sortAndFilterValues(allMoviesArray))
+    }
+
     fun getAllMovies(
         errorLiveData: MutableLiveData<Throwable>,
-        moviesLiveData: MutableLiveData<List<SectionedMovieItem>?>
+        moviesLiveData: MutableLiveData<List<SectionedMovieItem>?>,
+        favoriteLiveData: MutableLiveData<List<SectionedMovieItem>?>
     ) {
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
                 val request =
-                    apiSource.apiInterface?.getList(
+                    apiSource.getList(
                         Constants.API_KEY,
                         Constants.API_SORT_BY,
                         getCurrentDateAndFormat(),
                         getFutureDateAndFormat()
                     )
                 try {
-                    val response = request?.await()
+                    val response = request.await()
 
-                    dbDataSource.deleteAll()
-                    dbDataSource.insertAll((response?.body() as TopResponse).results)
+                    movieDbDataSource.deleteAll()
+                    movieDbDataSource.insertAll((response.body() as TopResponse).results)
 
                 } catch (e: HttpException) {
                     errorLiveData.value = e
                 } catch (e: Throwable) {
                     errorLiveData.value = e
                 } finally {
-                    allMoviesArray = ArrayList(dbDataSource.findAll())
+                    allMoviesArray = ArrayList(movieDbDataSource.findAll())
 
-                    val jobGetFavorite = dbRepository.getAllFavorites()
-                    jobGetFavorite.join()
+//                    val jobGetFavorite = getAllFavorites(favoriteLiveData)
+//                    jobGetFavorite.join()
 
                     val listPrepared = sortAndFilterValues(allMoviesArray)
                     moviesLiveData.value = markFavorite(listPrepared)
@@ -65,6 +88,37 @@ class ApiRepository @Inject constructor(apiSource: ApiSource, dbRepository: DbRe
         favoriteLiveData: MutableLiveData<List<SectionedMovieItem>?>
     ) {
         favoriteLiveData.value = sortAndFilterValues(unpreparedList)
+    }
+
+    fun saveFavorites() {
+        if (favoriteIdsValues.isNotEmpty()) {
+            GlobalScope.launch {
+                withContext(Dispatchers.Main) {
+                    favoriteDataSource.deleteAllFavorites()
+                    favoritesArray.clear()
+                    favoriteIdsValues.forEach { favoritesArray.add(FavoriteData(it)) }
+                    favoriteDataSource.insertAllFavoriteDatas(favoritesArray)
+                }
+            }
+        }
+    }
+
+    private fun markFavorite(listSorted: List<SectionedMovieItem>): List<SectionedMovieItem> {
+        listSorted.forEach {
+            it.value?.isFavorite = favoriteIdsValues.contains(it.value?.id)
+        }
+        return listSorted
+    }
+
+    private fun getAllFavorites(favoriteLiveData: MutableLiveData<List<SectionedMovieItem>?>): Job {
+        return GlobalScope.launch {
+            withContext(Dispatchers.Main) {
+                favoritesArray = favoriteDataSource.getAllFavorites() as MutableList<FavoriteData>
+                favoritesArray.forEach { favoriteIdsValues.add(it.id) }
+                val listPrepared = sortAndFilterValues(allMoviesArray)
+                favoriteLiveData.value = markFavorite(listPrepared)
+            }
+        }
     }
 
     private fun sortAndFilterValues(unpreparedList: List<MovieData>): List<SectionedMovieItem> {
@@ -154,4 +208,5 @@ class ApiRepository @Inject constructor(apiSource: ApiSource, dbRepository: DbRe
         val dt = cal.time
         return Constants.fullDateFormat.format(dt)
     }
+
 }

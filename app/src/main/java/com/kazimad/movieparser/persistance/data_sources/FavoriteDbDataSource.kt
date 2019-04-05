@@ -1,6 +1,6 @@
 package com.kazimad.movieparser.persistance.data_sources
 
-import com.kazimad.movieparser.models.FavoriteData
+import com.kazimad.movieparser.entities.FavoriteData
 import com.kazimad.movieparser.persistance.db_repositories.FavoriteInterface
 import com.kazimad.movieparser.persistance.daos.FavoriteDao
 import javax.inject.Inject

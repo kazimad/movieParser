@@ -1,6 +1,6 @@
 package com.kazimad.movieparser.persistance.data_sources
 
-import com.kazimad.movieparser.models.MovieData
+import com.kazimad.movieparser.entities.MovieData
 import com.kazimad.movieparser.persistance.db_repositories.MovieInterface
 import com.kazimad.movieparser.persistance.daos.MovieDao
 import javax.inject.Inject

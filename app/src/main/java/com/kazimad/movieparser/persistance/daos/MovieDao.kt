@@ -1,8 +1,7 @@
 package com.kazimad.movieparser.persistance.daos
 
 import androidx.room.*
-import com.kazimad.movieparser.models.FavoriteData
-import com.kazimad.movieparser.models.MovieData
+import com.kazimad.movieparser.entities.MovieData
 
 
 @Dao

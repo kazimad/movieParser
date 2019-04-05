@@ -3,8 +3,8 @@ package com.kazimad.movieparser.persistance
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.kazimad.movieparser.models.FavoriteData
-import com.kazimad.movieparser.models.MovieData
+import com.kazimad.movieparser.entities.FavoriteData
+import com.kazimad.movieparser.entities.MovieData
 import com.kazimad.movieparser.persistance.daos.FavoriteDao
 import com.kazimad.movieparser.persistance.daos.MovieDao
 

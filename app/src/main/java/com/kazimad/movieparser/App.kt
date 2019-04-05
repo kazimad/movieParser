@@ -4,6 +4,7 @@ import android.app.Application
 import com.kazimad.movieparser.dagger.component.DaggerMainComponent
 import com.kazimad.movieparser.dagger.component.MainComponent
 import com.kazimad.movieparser.dagger.module.AppModule
+import com.kazimad.movieparser.dagger.module.ContextModule
 import com.kazimad.movieparser.dagger.module.RoomModule
 import com.kazimad.movieparser.utils.Logger
 
@@ -22,6 +23,7 @@ class App : Application() {
         mainComponent = DaggerMainComponent.builder()
             .appModule(AppModule())
             .roomModule(RoomModule())
+            .contextModule(ContextModule(applicationContext))
             .build()
     }
 

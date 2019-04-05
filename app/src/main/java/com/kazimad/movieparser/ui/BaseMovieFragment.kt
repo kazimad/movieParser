@@ -18,8 +18,8 @@ import com.kazimad.movieparser.R
 import com.kazimad.movieparser.adapters.MovieAdapter
 import com.kazimad.movieparser.enums.ClickVariants
 import com.kazimad.movieparser.interfaces.CustomClickListener
-import com.kazimad.movieparser.models.MovieData
-import com.kazimad.movieparser.models.SectionedMovieItem
+import com.kazimad.movieparser.entities.MovieData
+import com.kazimad.movieparser.entities.SectionedMovieItem
 import com.kazimad.movieparser.ui.main.MainFragmentViewModel
 import com.kazimad.movieparser.utils.NetworkUtils
 import retrofit2.HttpException
