@@ -1,4 +1,4 @@
-package com.kazimad.movieparser.ui.main
+package com.kazimad.movieparser.view.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +10,8 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kazimad.movieparser.interfaces.InterfaceFragment
 import com.kazimad.movieparser.R
-import com.kazimad.movieparser.ui.BaseMovieFragment
+import com.kazimad.movieparser.view.BaseMovieFragment
+import com.kazimad.movieparser.view_model.MainFragmentViewModel
 
 
 class MainFragment : BaseMovieFragment(), InterfaceFragment {

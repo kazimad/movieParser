@@ -3,8 +3,8 @@ package com.kazimad.movieparser.adapters
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.kazimad.movieparser.ui.favorite.FavoriteFragment
-import com.kazimad.movieparser.ui.main.MainFragment
+import com.kazimad.movieparser.view.favorite.FavoriteFragment
+import com.kazimad.movieparser.view.main.MainFragment
 
 class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 

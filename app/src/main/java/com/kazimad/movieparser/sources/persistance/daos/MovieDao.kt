@@ -1,33 +1,33 @@
 package com.kazimad.movieparser.sources.persistance.daos
 
 import androidx.room.*
-import com.kazimad.movieparser.entities.MovieData
+import com.kazimad.movieparser.entities.MovieEntity
 
 
 @Dao
 interface MovieDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertMovieData(movieData: MovieData)
+    fun insertMovieData(movieEntity: MovieEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAllMovieDatas(vararg movieDatas: MovieData)
+    fun insertAllMovieDatas(vararg movieEntities: MovieEntity)
 
     @Update
-    fun updateMovieData(movieData: MovieData)
+    fun updateMovieData(movieEntity: MovieEntity)
 
     @Delete
-    fun deleteMovieData(movieData: MovieData)
+    fun deleteMovieData(movieEntity: MovieEntity)
 
-    @Query("DELETE FROM MovieData")
+    @Query("DELETE FROM MovieEntity")
     fun deleteAllMovieData()
 
-    @Query("SELECT * FROM MovieData WHERE id ==:id")
-    fun getMovieDataById(id: Int): MovieData
+    @Query("SELECT * FROM MovieEntity WHERE id ==:id")
+    fun getMovieDataById(id: Int): MovieEntity
 
-    @Query("SELECT * FROM MovieData")
-    fun getMovieDatas(): List<MovieData>
+    @Query("SELECT * FROM MovieEntity")
+    fun getMovieDatas(): List<MovieEntity>
 
-    @Query("SELECT * FROM MovieData WHERE isFavorite == 1")
-    fun loadOnlyFavorite(): List<MovieData>
+    @Query("SELECT * FROM MovieEntity WHERE isFavorite == 1")
+    fun loadOnlyFavorite(): List<MovieEntity>
 }

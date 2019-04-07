@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName
 import com.kazimad.movieparser.sources.persistance.DataConverter
 
 @Entity
-data class MovieData(
+data class MovieEntity(
     @PrimaryKey
     val id: Int,
 

@@ -1,4 +1,4 @@
-package com.kazimad.movieparser.ui.main
+package com.kazimad.movieparser.view.main
 
 import android.os.Bundle
 import android.widget.ImageView

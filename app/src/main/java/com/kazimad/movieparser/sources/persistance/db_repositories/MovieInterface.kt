@@ -1,24 +1,24 @@
 package com.kazimad.movieparser.sources.persistance.db_repositories
 
-import com.kazimad.movieparser.entities.MovieData
+import com.kazimad.movieparser.entities.MovieEntity
 
 
 interface MovieInterface {
 
-    fun findById(id: Int): MovieData
+    fun findById(id: Int): MovieEntity
 
-    fun findAll(): List<MovieData>
+    fun findAll(): List<MovieEntity>
 
-    fun insert(movieData: MovieData)
+    fun insert(movieEntity: MovieEntity)
 
-    fun update(movieData: MovieData)
+    fun update(movieEntity: MovieEntity)
 
-    fun insertAll(movieData: List<MovieData>)
+    fun insertAll(movieData: List<MovieEntity>)
 
-    fun delete(movieData: MovieData)
+    fun delete(movieEntity: MovieEntity)
 
     fun deleteAll()
 
-    fun loadOnlyFavorite(): List<MovieData>
+    fun loadOnlyFavorite(): List<MovieEntity>
 
 }

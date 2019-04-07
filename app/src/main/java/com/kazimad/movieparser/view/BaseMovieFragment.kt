@@ -1,4 +1,4 @@
-package com.kazimad.movieparser.ui
+package com.kazimad.movieparser.view
 
 import android.content.Context
 import android.content.Intent
@@ -18,9 +18,9 @@ import com.kazimad.movieparser.R
 import com.kazimad.movieparser.adapters.MovieAdapter
 import com.kazimad.movieparser.enums.ClickVariants
 import com.kazimad.movieparser.interfaces.CustomClickListener
-import com.kazimad.movieparser.entities.MovieData
+import com.kazimad.movieparser.entities.MovieEntity
 import com.kazimad.movieparser.entities.SectionedMovieItem
-import com.kazimad.movieparser.ui.main.MainFragmentViewModel
+import com.kazimad.movieparser.view_model.MainFragmentViewModel
 import com.kazimad.movieparser.utils.Logger
 import com.kazimad.movieparser.utils.NetworkUtils
 import retrofit2.HttpException
@@ -66,12 +66,12 @@ abstract class BaseMovieFragment : Fragment(), CustomClickListener {
     }
 
 
-    private fun shareMovie(movieData: MovieData) {
+    private fun shareMovie(movieEntity: MovieEntity) {
         val sendIntent = Intent()
         sendIntent.action = Intent.ACTION_SEND
         sendIntent.putExtra(
             Intent.EXTRA_TEXT,
-            movieData.toString()
+            movieEntity.toString()
         )
         sendIntent.type = "text/plain"
         if (context != null && context?.packageManager != null) {
@@ -119,9 +119,9 @@ abstract class BaseMovieFragment : Fragment(), CustomClickListener {
         viewModel.saveFavorites()
     }
 
-    override fun onCustomClick(variants: ClickVariants, movieData: MovieData) {
+    override fun onCustomClick(variants: ClickVariants, movieEntity: MovieEntity) {
         if (variants == ClickVariants.SHARE_CLICK) {
-            shareMovie(movieData)
+            shareMovie(movieEntity)
         }
     }
 }

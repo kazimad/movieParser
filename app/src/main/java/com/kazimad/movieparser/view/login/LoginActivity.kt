@@ -1,4 +1,4 @@
-package com.kazimad.movieparser.ui.login
+package com.kazimad.movieparser.view.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,8 +7,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.kazimad.movieparser.interfaces.InterfaceActivity
 import com.kazimad.movieparser.R
-import com.kazimad.movieparser.ui.main.MainActivity
+import com.kazimad.movieparser.view.main.MainActivity
 import com.kazimad.movieparser.utils.ActivityUtils
+import com.kazimad.movieparser.view_model.LoginActivityViewModel
 
 class LoginActivity : AppCompatActivity(), InterfaceActivity {
     private lateinit var viewModel: LoginActivityViewModel

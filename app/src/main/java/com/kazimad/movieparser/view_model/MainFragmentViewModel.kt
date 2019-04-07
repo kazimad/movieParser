@@ -1,15 +1,14 @@
-package com.kazimad.movieparser.ui.main
+package com.kazimad.movieparser.view_model
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.kazimad.movieparser.App
 import com.kazimad.movieparser.dagger.enums.MovieItemClickVariant
-import com.kazimad.movieparser.entities.MovieData
+import com.kazimad.movieparser.entities.MovieEntity
 import com.kazimad.movieparser.entities.SectionedMovieItem
 
 
-class MainFragmentViewModel(application: Application) : AndroidViewModel(application) {
+class MainFragmentViewModel : ViewModel() {
 
     var moviesLiveData: MutableLiveData<List<SectionedMovieItem>?> = MutableLiveData()
     var favoriteLiveData: MutableLiveData<List<SectionedMovieItem>?> = MutableLiveData()
@@ -17,7 +16,7 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
 
 
     fun getAllMovies() {
-        App.mainComponent.getRepository().getAllMovies(errorLiveData, moviesLiveData, favoriteLiveData)
+        App.mainComponent.getRepository().getAllMovies(errorLiveData, moviesLiveData)
     }
 
     fun showFavorites() {
@@ -36,22 +35,22 @@ class MainFragmentViewModel(application: Application) : AndroidViewModel(applica
     }
 
 
-    fun onMovieButtonClick(clickVariant: MovieItemClickVariant, movieData: MovieData) {
+    fun onMovieButtonClick(clickVariant: MovieItemClickVariant, movieEntity: MovieEntity) {
         when (clickVariant) {
             MovieItemClickVariant.ADD_FAVORITE -> {
-                workWithLocalFavoriteData(movieData, true)
+                workWithLocalFavoriteData(movieEntity, true)
             }
             MovieItemClickVariant.REMOVE_FAVORITE -> {
-                workWithLocalFavoriteData(movieData, false)
+                workWithLocalFavoriteData(movieEntity, false)
             }
         }
     }
 
-    private fun workWithLocalFavoriteData(movieData: MovieData, insert: Boolean) {
+    private fun workWithLocalFavoriteData(movieEntity: MovieEntity, insert: Boolean) {
         if (insert) {
-            App.mainComponent.getRepository().favoriteIdsValues.add(movieData.id)
+            App.mainComponent.getRepository().favoriteIdsList.add(movieEntity.id)
         } else {
-            App.mainComponent.getRepository().favoriteIdsValues.remove(movieData.id)
+            App.mainComponent.getRepository().favoriteIdsList.remove(movieEntity.id)
             showFavorites()
         }
     }

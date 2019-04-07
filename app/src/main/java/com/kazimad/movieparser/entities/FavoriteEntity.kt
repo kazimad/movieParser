@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class FavoriteData(
+data class FavoriteEntity(
     @PrimaryKey
     val id: Int
 )

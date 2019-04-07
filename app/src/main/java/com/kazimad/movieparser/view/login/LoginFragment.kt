@@ -1,4 +1,4 @@
-package com.kazimad.movieparser.ui.login
+package com.kazimad.movieparser.view.login
 
 import android.content.Context
 import android.content.Intent

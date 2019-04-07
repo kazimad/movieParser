@@ -9,7 +9,7 @@ import com.kazimad.movieparser.dagger.module.RoomModule
 import com.kazimad.movieparser.utils.Logger
 
 
-class App : Application() {
+open class App : Application() {
 
 
     override fun onCreate() {

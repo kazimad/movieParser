@@ -1,6 +1,6 @@
 package com.kazimad.movieparser.sources.persistance.data_sources
 
-import com.kazimad.movieparser.entities.MovieData
+import com.kazimad.movieparser.entities.MovieEntity
 import com.kazimad.movieparser.sources.persistance.db_repositories.MovieInterface
 import com.kazimad.movieparser.sources.persistance.daos.MovieDao
 import javax.inject.Inject
@@ -9,11 +9,11 @@ import javax.inject.Inject
 class MovieDbDataSource @Inject
 constructor(private val movieDao: MovieDao) : MovieInterface {
 
-    override fun update(movieData: MovieData) {
-        return movieDao.updateMovieData(movieData)
+    override fun update(movieEntity: MovieEntity) {
+        return movieDao.updateMovieData(movieEntity)
     }
 
-    override fun loadOnlyFavorite(): List<MovieData> {
+    override fun loadOnlyFavorite(): List<MovieEntity> {
         return movieDao.loadOnlyFavorite()
     }
 
@@ -21,23 +21,23 @@ constructor(private val movieDao: MovieDao) : MovieInterface {
         movieDao.deleteAllMovieData()
     }
 
-    override fun delete(movieData: MovieData) {
-        movieDao.deleteMovieData(movieData)
+    override fun delete(movieEntity: MovieEntity) {
+        movieDao.deleteMovieData(movieEntity)
     }
 
-    override fun findAll(): List<MovieData> {
+    override fun findAll(): List<MovieEntity> {
         return movieDao.getMovieDatas()
     }
 
-    override fun findById(id: Int): MovieData {
+    override fun findById(id: Int): MovieEntity {
         return movieDao.getMovieDataById(id)
     }
 
-    override fun insert(movieData: MovieData) {
-        movieDao.insertMovieData(movieData)
+    override fun insert(movieEntity: MovieEntity) {
+        movieDao.insertMovieData(movieEntity)
     }
 
-    override fun insertAll(movieData: List<MovieData>) {
+    override fun insertAll(movieData: List<MovieEntity>) {
         movieDao.insertAllMovieDatas(*movieData.toTypedArray())
     }
 }

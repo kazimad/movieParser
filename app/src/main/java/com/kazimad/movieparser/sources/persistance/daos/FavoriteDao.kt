@@ -4,25 +4,25 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.kazimad.movieparser.entities.FavoriteData
+import com.kazimad.movieparser.entities.FavoriteEntity
 
 @Dao
 interface FavoriteDao {
-    @Query("SELECT * FROM FavoriteData WHERE id ==:id")
-    fun getFavoriteById(id: Int): FavoriteData
+    @Query("SELECT * FROM FavoriteEntity WHERE id ==:id")
+    fun getFavoriteById(id: Int): FavoriteEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertFavorites(favoriteData: FavoriteData)
+    fun insertFavorites(favoriteEntity: FavoriteEntity)
 
-    @Query("DELETE FROM FavoriteData")
+    @Query("DELETE FROM FavoriteEntity")
     fun deleteAllFavorites()
 
-    @Query("DELETE FROM FavoriteData WHERE id = :id")
+    @Query("DELETE FROM FavoriteEntity WHERE id = :id")
     fun deleteFavoriteData(id: Int)
 
-    @Query("SELECT * FROM FavoriteData")
-    fun getAllFavorites(): List<FavoriteData>
+    @Query("SELECT * FROM FavoriteEntity")
+    fun getAllFavorites(): List<FavoriteEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAllFavoriteDatas(vararg favoriteDatas: FavoriteData)
+    fun insertAllFavoriteDatas(vararg favoriteEntities: FavoriteEntity)
 }
