@@ -10,10 +10,7 @@ import com.kazimad.movieparser.entities.MovieEntity
 import com.kazimad.movieparser.entities.SectionedMovieItem
 import com.kazimad.movieparser.enums.ListTypes
 import com.kazimad.movieparser.utils.Constants
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -296,7 +293,6 @@ class RepositoryTest {
                 val cal = Calendar.getInstance()!!
                 cal.time = dateFull
                 val month = cal.get(Calendar.MONTH)
-                System.out.println("month is ${month}, prevMonth is ${prevMonth}")
                 Assert.assertTrue(month > prevMonth)
                 prevMonth = month
             } else {
@@ -321,39 +317,33 @@ class RepositoryTest {
         favoriteIdsList.add(movieEntity1.id)
         favoriteIdsList.add(movieEntity2.id)
         favoriteIdsList.add(movieEntity3.id)
-        runBlocking {
-            val jobSave = launch {
-                withContext(Dispatchers.IO) {
-                    System.out.println("testComponent is null ${testComponent == null}")
-                    System.out.println("testComponent.getRepository() is null ${testComponent.getRepository() == null}")
-                    System.out.println("testComponent.getRepository().favoriteDataSource is null ${testComponent.getRepository().favoriteDataSource == null}")
-                    System.out.println("testComponent.getRepository().favoriteDataSource.deleteAllFavorites() is null ${testComponent.getRepository().favoriteDataSource.deleteAllFavorites() == null}")
-                    testComponent.getRepository().favoriteDataSource.deleteAllFavorites()
-                    favoritesList.clear()
 
-                    Assert.assertTrue(favoritesList.size == 0)
+        val async = GlobalScope.async {
+            withContext(Dispatchers.IO) {
+                testComponent.getRepository().favoriteDataSource.deleteAllFavorites()
+                favoritesList.clear()
 
-                    favoriteIdsList.forEach { favoritesList.add(FavoriteEntity(it)) }
+                Assert.assertTrue(favoritesList.size == 0)
 
-                    Assert.assertTrue(favoritesList.size == favoriteIdsList.size)
-                    Assert.assertEquals(favoritesList[0], favoriteIdsList[0])
+                favoriteIdsList.forEach { favoritesList.add(FavoriteEntity(it)) }
 
-                    testComponent.getRepository().favoriteDataSource.insertAllFavoriteDatas(favoritesList)
+                Assert.assertTrue(favoritesList.size == favoriteIdsList.size)
+                Assert.assertEquals(favoritesList[0], favoriteIdsList[0])
 
+                testComponent.getRepository().favoriteDataSource.insertAllFavoriteDatas(favoritesList)
+                val listAllFavoritesTest =
+                    testComponent.getRepository().favoriteDataSource.getAllFavorites()
+
+                Assert.assertTrue(listAllFavoritesTest.isNotEmpty())
+
+                for (i in 0..listAllFavoritesTest.size) {
+                    Assert.assertEquals(listAllFavoritesTest[i].id, favoritesList[i].id)
                 }
             }
-            jobSave.join()
-
-            launch {
-                withContext(Dispatchers.IO) {
-                    val listAllFavoritesTest = testComponent.getRepository().favoriteDataSource.getAllFavorites()
-
-                    Assert.assertTrue(listAllFavoritesTest.isNotEmpty())
-
-                    for (i in 0..listAllFavoritesTest.size) {
-                        Assert.assertEquals(listAllFavoritesTest[i].id, favoritesList[i].id)
-                    }
-                }
+        }
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
+                async.await()
             }
         }
     }
