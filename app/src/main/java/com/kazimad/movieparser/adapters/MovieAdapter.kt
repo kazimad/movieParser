@@ -9,13 +9,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.dagger.enums.MovieItemClickVariant
+import com.kazimad.movieparser.entities.SectionedMovieItem
 import com.kazimad.movieparser.enums.ClickVariants
 import com.kazimad.movieparser.enums.ListTypes
 import com.kazimad.movieparser.interfaces.CustomClickListener
-import com.kazimad.movieparser.entities.SectionedMovieItem
 import com.kazimad.movieparser.sources.remote.ApiSource
-import com.kazimad.movieparser.view_model.MainFragmentViewModel
 import com.kazimad.movieparser.utils.glide.Glider
+import com.kazimad.movieparser.view_model.MainFragmentViewModel
 
 
 class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -64,28 +64,31 @@ class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                             ApiSource.baseImageUrl + currentItem.posterPath,
                             viewHolder.avatar
                         )
-                        viewHolder.headerText.text = currentItem.originalTitle
-                        viewHolder.descriptionText.text = currentItem.overview
-                        viewHolder.ratingText.text = currentItem.popularity.toString()
-                        viewHolder.favoriteText.text =
+                        viewHolder.apply {
+                            //TODO check apply
+                            headerText.text = currentItem.originalTitle
+                            descriptionText.text = currentItem.overview
+                            ratingText.text = currentItem.popularity.toString()
+                            favoriteText.text =
                                 if (!currentItem.isFavorite) viewHolder.favoriteText.context.getString(R.string.item_add_to_favorite)
                                 else viewHolder.favoriteText.context.getString(R.string.item_remove_from_favorite)
-                        viewHolder.favoriteContainer.setOnClickListener {
-                            viewModel?.let {
-                                viewHolder.favoriteText.text =
+                            favoriteContainer.setOnClickListener {
+                                viewModel?.let {
+                                    viewHolder.favoriteText.text =
                                         if (currentItem.isFavorite) viewHolder.favoriteContainer.context.getString(R.string.item_add_to_favorite)
                                         else viewHolder.favoriteContainer.context.getString(R.string.item_remove_from_favorite)
-                                if (currentItem.isFavorite) {
-                                    viewModel!!.onMovieButtonClick(MovieItemClickVariant.REMOVE_FAVORITE, currentItem)
-                                } else {
-                                    viewModel!!.onMovieButtonClick(MovieItemClickVariant.ADD_FAVORITE, currentItem)
+                                    if (currentItem.isFavorite) viewModel!!.onMovieButtonClick(
+                                        MovieItemClickVariant.REMOVE_FAVORITE,
+                                        currentItem
+                                    )
+                                    else viewModel!!.onMovieButtonClick(MovieItemClickVariant.ADD_FAVORITE, currentItem)
+                                    currentItem.isFavorite = !currentItem.isFavorite
+                                    notifyDataSetChanged()
                                 }
-                                currentItem.isFavorite = !currentItem.isFavorite
-                                notifyDataSetChanged()
                             }
-                        }
-                        viewHolder.shareContainer.setOnClickListener {
-                            customClickListener?.onCustomClick(ClickVariants.SHARE_CLICK, currentItem)
+                            shareContainer.setOnClickListener {
+                                customClickListener?.onCustomClick(ClickVariants.SHARE_CLICK, currentItem)
+                            }
                         }
                     }
                 }

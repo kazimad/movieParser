@@ -11,7 +11,6 @@ import com.kazimad.movieparser.sources.persistance.data_sources.MovieDbDataSourc
 import com.kazimad.movieparser.sources.remote.ApiSource
 import com.kazimad.movieparser.utils.Constants
 import kotlinx.coroutines.*
-import retrofit2.HttpException
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -47,34 +46,35 @@ class Repository @Inject constructor(
         errorLiveData: MutableLiveData<Throwable>,
         moviesLiveData: MutableLiveData<List<SectionedMovieItem>?>
     ) {
-        GlobalScope.launch {
-            withContext(Dispatchers.Main) {
-                val request =
-                    apiSource.getList(
-                        Constants.API_KEY,
-                        Constants.API_SORT_BY,
-                        getCurrentDateAndFormat(),
-                        getFutureDateAndFormat()
-                    )
-                try {
-                    val response = request.await()
+//TODO check  GlobalScope.launch(Dispatchers.IO)
+        GlobalScope.launch(Dispatchers.IO) {
+            val request =
+                apiSource.getList(
+                    Constants.API_KEY,
+                    Constants.API_SORT_BY,
+                    getCurrentDateAndFormat(),
+                    getFutureDateAndFormat()
+                )
+            try {
+                val response = request.await()
+// check response on null in deferred
+                movieDbDataSource.deleteAll()
+                movieDbDataSource.insertAll((response.body() as TopResponse).results)
 
-                    movieDbDataSource.deleteAll()
-                    movieDbDataSource.insertAll((response.body() as TopResponse).results)
-
-                } catch (e: HttpException) {
-                    errorLiveData.value = e
-                } catch (e: Throwable) {
-                    errorLiveData.value = e
-                } finally {
-                    allMoviesList = ArrayList(movieDbDataSource.findAll())
+            }
+// catch (e: HttpException) {
+//                errorLiveData.value = e
+//            }
+            catch (e: Throwable) {
+                errorLiveData.value = e
+            } finally {
+                allMoviesList = ArrayList(movieDbDataSource.findAll())
 
 //                    val jobGetFavorite = getAllFavorites(favoriteLiveData)
 //                    jobGetFavorite.join()
 
-                    val listPrepared = sortAndFilterValues(allMoviesList)
-                    moviesLiveData.value = markFavorite(listPrepared)
-                }
+                val listPrepared = sortAndFilterValues(allMoviesList)
+                moviesLiveData.value = markFavorite(listPrepared)
             }
         }
     }
@@ -88,13 +88,11 @@ class Repository @Inject constructor(
 
     fun saveFavorites() {
         if (favoriteIdsList.isNotEmpty()) {
-            GlobalScope.launch {
-                withContext(Dispatchers.Main) {
-                    favoriteDataSource.deleteAllFavorites()
-                    favoritesList.clear()
-                    favoriteIdsList.forEach { favoritesList.add(FavoriteEntity(it)) }
-                    favoriteDataSource.insertAllFavoriteDatas(favoritesList)
-                }
+            GlobalScope.launch(Dispatchers.Main) {
+                favoriteDataSource.deleteAllFavorites()
+                favoritesList.clear()
+                favoriteIdsList.forEach { favoritesList.add(FavoriteEntity(it)) }
+                favoriteDataSource.insertAllFavoriteDatas(favoritesList)
             }
         }
     }
@@ -106,6 +104,7 @@ class Repository @Inject constructor(
         return listSorted
     }
 
+    // TODO check
     private fun getAllFavorites(favoriteLiveData: MutableLiveData<List<SectionedMovieItem>?>): Job {
         return GlobalScope.launch {
             withContext(Dispatchers.Main) {

@@ -10,8 +10,6 @@ import com.kazimad.movieparser.utils.Logger
 
 
 open class App : Application() {
-
-
     override fun onCreate() {
         super.onCreate()
         Logger.init()

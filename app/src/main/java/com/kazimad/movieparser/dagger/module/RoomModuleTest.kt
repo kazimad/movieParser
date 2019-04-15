@@ -20,8 +20,8 @@ class RoomModuleTest {
     @Provides
     internal fun providesRoomDatabase(context: Context): AppDatabase {
         return Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
-            .fallbackToDestructiveMigration()
-//            .allowMainThreadQueries()
+//            .fallbackToDestructiveMigration()
+            .allowMainThreadQueries()
             .build()
     }
 

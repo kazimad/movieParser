@@ -6,8 +6,7 @@ import com.kazimad.movieparser.sources.persistance.daos.FavoriteDao
 import javax.inject.Inject
 
 class FavoriteDbDataSource @Inject
-constructor(private val favoriteDao: FavoriteDao) :
-    FavoriteInterface {
+constructor(private val favoriteDao: FavoriteDao) : FavoriteInterface {
 
     override fun insertAllFavoriteDatas(listFavoriteEntities: List<FavoriteEntity>) {
         favoriteDao.insertAllFavoriteDatas(*listFavoriteEntities.toTypedArray())

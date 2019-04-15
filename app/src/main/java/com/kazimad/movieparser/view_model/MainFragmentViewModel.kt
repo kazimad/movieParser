@@ -46,6 +46,7 @@ class MainFragmentViewModel : ViewModel() {
         }
     }
 
+    //TODO move to repo
     private fun workWithLocalFavoriteData(movieEntity: MovieEntity, insert: Boolean) {
         if (insert) {
             App.mainComponent.getRepository().favoriteIdsList.add(movieEntity.id)
