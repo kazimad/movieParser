@@ -2,26 +2,27 @@ package com.kazimad.movieparser.view.main
 
 import android.os.Bundle
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
 import com.facebook.Profile
 import com.facebook.ProfileTracker
 import com.google.android.material.tabs.TabLayout
-import com.kazimad.movieparser.interfaces.InterfaceActivity
-import com.kazimad.movieparser.interfaces.InterfaceFragment
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.adapters.SectionsPagerAdapter
+import com.kazimad.movieparser.interfaces.InterfaceActivity
+import com.kazimad.movieparser.interfaces.InterfaceFragment
 import com.kazimad.movieparser.utils.glide.Glider
+import com.kazimad.movieparser.view.base.BaseActivity
+import com.kazimad.movieparser.view.base.BaseFragment
 
 
-class MainActivity : AppCompatActivity(), InterfaceActivity {
+class MainActivity : BaseActivity(), InterfaceActivity {
 
     private lateinit var viewPagerContainer: ViewPager
     private lateinit var imageView: ImageView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.AppTheme)
+//        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 

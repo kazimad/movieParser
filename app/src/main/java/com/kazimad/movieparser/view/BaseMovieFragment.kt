@@ -23,9 +23,10 @@ import com.kazimad.movieparser.entities.SectionedMovieItem
 import com.kazimad.movieparser.view_model.MainFragmentViewModel
 import com.kazimad.movieparser.utils.Logger
 import com.kazimad.movieparser.utils.NetworkUtils
+import com.kazimad.movieparser.view.base.BaseFragment
 import retrofit2.HttpException
 
-abstract class BaseMovieFragment : Fragment(), CustomClickListener {
+abstract class BaseMovieFragment : BaseFragment(), CustomClickListener {
 
     private lateinit var adapter: MovieAdapter
     protected lateinit var activityContext: InterfaceActivity

@@ -9,13 +9,14 @@ import com.kazimad.movieparser.interfaces.InterfaceActivity
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.view.main.MainActivity
 import com.kazimad.movieparser.utils.ActivityUtils
+import com.kazimad.movieparser.view.base.BaseActivity
 import com.kazimad.movieparser.view_model.LoginActivityViewModel
 
-class LoginActivity : AppCompatActivity(), InterfaceActivity {
+class LoginActivity :BaseActivity(), InterfaceActivity {
     private lateinit var viewModel: LoginActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.AppTheme)
+//        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         viewModel = ViewModelProviders.of(this).get(LoginActivityViewModel::class.java)
