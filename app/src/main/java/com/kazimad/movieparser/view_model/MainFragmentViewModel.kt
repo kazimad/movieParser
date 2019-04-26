@@ -38,21 +38,14 @@ class MainFragmentViewModel : ViewModel() {
     fun onMovieButtonClick(clickVariant: MovieItemClickVariant, movieEntity: MovieEntity) {
         when (clickVariant) {
             MovieItemClickVariant.ADD_FAVORITE -> {
-                workWithLocalFavoriteData(movieEntity, true)
+                App.mainComponent.getRepository().workWithLocalFavoriteData(movieEntity, true)
             }
             MovieItemClickVariant.REMOVE_FAVORITE -> {
-                workWithLocalFavoriteData(movieEntity, false)
+                App.mainComponent.getRepository().workWithLocalFavoriteData(movieEntity, false)
+                showFavorites()
             }
         }
     }
 
-    //TODO move to repo
-    private fun workWithLocalFavoriteData(movieEntity: MovieEntity, insert: Boolean) {
-        if (insert) {
-            App.mainComponent.getRepository().favoriteIdsList.add(movieEntity.id)
-        } else {
-            App.mainComponent.getRepository().favoriteIdsList.remove(movieEntity.id)
-            showFavorites()
-        }
-    }
+
 }
