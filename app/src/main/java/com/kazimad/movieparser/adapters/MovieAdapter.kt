@@ -65,18 +65,17 @@ class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                             viewHolder.avatar
                         )
                         viewHolder.apply {
-                            //TODO check apply
                             headerText.text = currentItem.originalTitle
                             descriptionText.text = currentItem.overview
                             ratingText.text = currentItem.popularity.toString()
                             favoriteText.text =
-                                if (!currentItem.isFavorite) viewHolder.favoriteText.context.getString(R.string.item_add_to_favorite)
-                                else viewHolder.favoriteText.context.getString(R.string.item_remove_from_favorite)
+                                if (!currentItem.isFavorite) favoriteText.context.getString(R.string.item_add_to_favorite)
+                                else favoriteText.context.getString(R.string.item_remove_from_favorite)
                             favoriteContainer.setOnClickListener {
                                 viewModel?.let {
-                                    viewHolder.favoriteText.text =
-                                        if (currentItem.isFavorite) viewHolder.favoriteContainer.context.getString(R.string.item_add_to_favorite)
-                                        else viewHolder.favoriteContainer.context.getString(R.string.item_remove_from_favorite)
+                                    favoriteText.text =
+                                        if (currentItem.isFavorite) favoriteContainer.context.getString(R.string.item_add_to_favorite)
+                                        else favoriteContainer.context.getString(R.string.item_remove_from_favorite)
                                     if (currentItem.isFavorite) viewModel!!.onMovieButtonClick(
                                         MovieItemClickVariant.REMOVE_FAVORITE,
                                         currentItem
