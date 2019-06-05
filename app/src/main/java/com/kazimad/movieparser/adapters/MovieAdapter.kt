@@ -17,7 +17,6 @@ import com.kazimad.movieparser.sources.remote.ApiSource
 import com.kazimad.movieparser.utils.glide.Glider
 import com.kazimad.movieparser.view_model.MainFragmentViewModel
 
-
 class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var movieItems: MutableList<SectionedMovieItem>? = mutableListOf()

@@ -1,6 +1,7 @@
 package com.kazimad.movieparser.repo
 
 import androidx.lifecycle.MutableLiveData
+import com.kazimad.movieparser.App
 import com.kazimad.movieparser.entities.FavoriteEntity
 import com.kazimad.movieparser.entities.MovieEntity
 import com.kazimad.movieparser.entities.SectionedMovieItem
@@ -46,7 +47,6 @@ class Repository @Inject constructor(
         errorLiveData: MutableLiveData<Throwable>,
         moviesLiveData: MutableLiveData<List<SectionedMovieItem>?>
     ) {
-//TODO check  GlobalScope.launch(Dispatchers.IO)
         GlobalScope.launch(Dispatchers.IO) {
             val request =
                 apiSource.getList(
@@ -57,24 +57,17 @@ class Repository @Inject constructor(
                 )
             try {
                 val response = request.await()
-// check response on null in deferred
                 movieDbDataSource.deleteAll()
                 movieDbDataSource.insertAll((response.body() as TopResponse).results)
 
-            }
-// catch (e: HttpException) {
-//                errorLiveData.value = e
-//            }
-            catch (e: Throwable) {
+            } catch (e: Throwable) {
                 errorLiveData.value = e
             } finally {
                 allMoviesList = ArrayList(movieDbDataSource.findAll())
-
-//                    val jobGetFavorite = getAllFavorites(favoriteLiveData)
-//                    jobGetFavorite.join()
-
                 val listPrepared = sortAndFilterValues(allMoviesList)
-                moviesLiveData.value = markFavorite(listPrepared)
+                withContext(Dispatchers.Main) {
+                    moviesLiveData.value = markFavorite(listPrepared)
+                }
             }
         }
     }
@@ -88,7 +81,7 @@ class Repository @Inject constructor(
 
     fun saveFavorites() {
         if (favoriteIdsList.isNotEmpty()) {
-            GlobalScope.launch(Dispatchers.Main) {
+            GlobalScope.launch(Dispatchers.IO) {
                 favoriteDataSource.deleteAllFavorites()
                 favoritesList.clear()
                 favoriteIdsList.forEach { favoritesList.add(FavoriteEntity(it)) }
@@ -104,13 +97,12 @@ class Repository @Inject constructor(
         return listSorted
     }
 
-    // TODO check
     private fun getAllFavorites(favoriteLiveData: MutableLiveData<List<SectionedMovieItem>?>): Job {
-        return GlobalScope.launch {
+        return GlobalScope.launch(Dispatchers.IO) {
+            favoritesList = favoriteDataSource.getAllFavorites() as MutableList<FavoriteEntity>
+            favoritesList.forEach { favoriteIdsList.add(it.id) }
+            val listPrepared = sortAndFilterValues(allMoviesList)
             withContext(Dispatchers.Main) {
-                favoritesList = favoriteDataSource.getAllFavorites() as MutableList<FavoriteEntity>
-                favoritesList.forEach { favoriteIdsList.add(it.id) }
-                val listPrepared = sortAndFilterValues(allMoviesList)
                 favoriteLiveData.value = markFavorite(listPrepared)
             }
         }
@@ -190,6 +182,13 @@ class Repository @Inject constructor(
         return sortedFilteredResult
     }
 
+    fun workWithLocalFavoriteData(movieEntity: MovieEntity, insert: Boolean) {
+        if (insert) {
+            favoriteIdsList.add(movieEntity.id)
+        } else {
+           favoriteIdsList.remove(movieEntity.id)
+        }
+    }
 
     private fun getCurrentDateAndFormat(): String {
         val cal = Calendar.getInstance()!!

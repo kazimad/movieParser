@@ -317,9 +317,7 @@ class RepositoryTest {
         favoriteIdsList.add(movieEntity1.id)
         favoriteIdsList.add(movieEntity2.id)
         favoriteIdsList.add(movieEntity3.id)
-
-        // TODO remove corutines , because db config changed
-        //TODO check
+        
         val async = GlobalScope.async (Dispatchers.IO){
                 testComponent.getRepository().favoriteDataSource.deleteAllFavorites()
                 favoritesList.clear()

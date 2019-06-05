@@ -16,9 +16,10 @@ import com.kazimad.movieparser.interfaces.InterfaceActivity
 import com.kazimad.movieparser.R
 import com.kazimad.movieparser.utils.Logger
 import com.kazimad.movieparser.utils.NetworkUtils
+import com.kazimad.movieparser.view.base.BaseFragment
 
 
-class LoginFragment : Fragment() {
+class LoginFragment : BaseFragment() {
 
     private lateinit var activityContext: InterfaceActivity
     private val facebookCallbackManager = CallbackManager.Factory.create()!!
